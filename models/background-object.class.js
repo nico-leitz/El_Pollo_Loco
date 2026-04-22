@@ -1,15 +1,10 @@
 class BackgroundObjects extends MoveableObject {
-    positionY = 0;
-    positionX = 0;
     width = 720;
-    height = 480;
+    height = 400;
 
-    constructor(imagePath) {
-         super().loadImage(imagePath);
-         
-    }
-
-    addToMap(background) {
-
+    constructor(imagePath, x) {
+        super().loadImage(imagePath);
+        this.positionX = x;
+        this.positionY = 480 - this.height; 
     }
 }
