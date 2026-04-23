@@ -36,14 +36,15 @@ class World {
 
         this.addObjectsToMap(this.layers);
         
-        this.addToMap(this.character)
-        this.addObjectsToMap(this.clouds)
-        this.addObjectsToMap(this.enemies)
+        this.addToMap(this.character);
+        this.addObjectsToMap(this.clouds);
+        this.addObjectsToMap(this.enemies);
           
         let self = this;
         requestAnimationFrame(function() {
              self.draw();
         });
+
     }
 
     addObjectsToMap(objects) {
