@@ -1,5 +1,5 @@
 class Character extends MoveableObject {
-
+    positionX = 0;
     positionY = 140;
     height = 300;
     width = 150;
@@ -32,6 +32,7 @@ class Character extends MoveableObject {
                 this.img = this.imgCache[path];
                 this.currentImage++;
             }   
+            
         }, 100);
     }
 
@@ -41,15 +42,17 @@ class Character extends MoveableObject {
                  this.positionX += 2.45;
                  this.otherDirection = false;
         }    
+                this.world.camera_x = -this.positionX;
         }, 1000 / 60);
     }
 
     moveLeft() {
         setInterval(() => {
             if(this.world.keyboard.LEFT) {
-                 this.positionX -= 2.45;
-                  this.otherDirection = true;
+                this.positionX -= 2.45;
+                this.otherDirection = true;
         }    
+             this.world.camera_x = -this.positionX;
         }, 1000 / 60);
     }
 
