@@ -8,6 +8,7 @@ class Chicken extends MoveableObject {
         'img/3_enemies_chicken/chicken_normal/1_walk/3_w.png'
     ];
     currentImage = 0;
+    speed = 0.5 + Math.random() * 0.5
 
     constructor() {
         super().loadImage("img/3_enemies_chicken/chicken_normal/1_walk/1_w.png");
@@ -29,7 +30,7 @@ class Chicken extends MoveableObject {
     
     moveLeft() {
         setInterval(() => {
-            this.positionX -= 0.45;
+            this.positionX -= this.speed;
             if (this.positionX < -this.width) { 
                 this.positionX = 720;
             }
