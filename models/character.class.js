@@ -15,7 +15,7 @@ class Character extends MoveableObject {
     constructor() {
         super();
         this.loadImage("img/2_character_pepe/2_walk/W-21.png");
-        this.loadImages(this.IMAGES_WALKING)
+        this.loadImages(this.IMAGES_WALKING);
         this.positionX = 100;
 
         this.animate();
@@ -23,10 +23,11 @@ class Character extends MoveableObject {
 
     animate() {
         setInterval(() => {
-        let path = this.IMAGES_WALKING[this.currentImage]
-        this.img = this.imgCache[path];
-        this.currentImage++;
-        }, 1000) 
+            let i = this.currentImage % this.IMAGES_WALKING.length;
+            let path = this.IMAGES_WALKING[i];
+            this.img = this.imgCache[path];
+            this.currentImage++;
+        }, 100);
     }
 
     jump() {
