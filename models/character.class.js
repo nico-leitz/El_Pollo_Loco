@@ -1,5 +1,5 @@
 class Character extends MoveableObject {
-    positionX = 100;
+
     positionY = 140;
     height = 300;
     width = 150;
@@ -26,7 +26,7 @@ class Character extends MoveableObject {
 
     animate() {
         setInterval(() => {
-            if (this.world.keyboard.RIGHT) {
+            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                 let i = this.currentImage % this.IMAGES_WALKING.length;
                 let path = this.IMAGES_WALKING[i];
                 this.img = this.imgCache[path];
@@ -39,9 +39,7 @@ class Character extends MoveableObject {
         setInterval(() => {
             if(this.world.keyboard.RIGHT) {
                  this.positionX += 2.45;
-            if (this.positionX > 720) { 
-                this.positionX = 0;
-            }
+                 this.otherDirection = false;
         }    
         }, 1000 / 60);
     }
@@ -50,9 +48,7 @@ class Character extends MoveableObject {
         setInterval(() => {
             if(this.world.keyboard.LEFT) {
                  this.positionX -= 2.45;
-            if (this.positionX < -200) { 
-                this.positionX = 720;
-            }
+                  this.otherDirection = true;
         }    
         }, 1000 / 60);
     }

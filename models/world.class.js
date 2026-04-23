@@ -24,7 +24,7 @@ class World {
     canvas;
     ctx;
     keyboard;
-    
+
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -61,12 +61,24 @@ class World {
     }
 
     addToMap(moveableObject) {
-         this.ctx.drawImage(
-                moveableObject.img,
-                moveableObject.positionX,
-                moveableObject.positionY,
-                moveableObject.width,
-                moveableObject.height
-            )
+        if (moveableObject.otherDirection) {
+            this.ctx.save();
+            this.ctx.translate(moveableObject.width, 0);
+            this.ctx.scale(-1, 1);
+            moveableObject.positionX = moveableObject.positionX * -1; 
+        }
+
+        this.ctx.drawImage(
+            moveableObject.img,
+            moveableObject.positionX,
+            moveableObject.positionY,
+            moveableObject.width,
+            moveableObject.height
+        );
+
+        if (moveableObject.otherDirection) {
+            moveableObject.positionX = moveableObject.positionX * -1;
+            this.ctx.restore();
+        }
     }
 }
