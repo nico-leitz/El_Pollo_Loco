@@ -41,4 +41,11 @@ class MoveableObject {
     isAboveGround() {
         return this.positionY < 150
     }
+
+   isColliding(moveableObject) {
+    return this.positionX + this.width > moveableObject.positionX &&
+           this.positionY + this.height > moveableObject.positionY &&
+           this.positionX < moveableObject.positionX + moveableObject.width &&
+           this.positionY < moveableObject.positionY + moveableObject.height;
+}
 }
