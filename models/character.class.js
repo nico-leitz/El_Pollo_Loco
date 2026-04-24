@@ -36,8 +36,7 @@ class Character extends MoveableObject {
         
         this.applyGravity();
         this.animate();
-        this.moveRight();
-        this.moveLeft();
+        this.move();
     }
 
 animate() {
@@ -49,28 +48,25 @@ animate() {
         } else {
             this.loadImage('img/2_character_pepe/2_walk/W-21.png');
         }
+
     }, 100);
 }
 
-    moveRight() {
-        setInterval(() => {
-            if(this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
-                 this.positionX += 2.45;
-                 this.otherDirection = false;
-        }    
-                this.world.camera_x = -this.positionX;
-        }, 1000 / 60);
-    }
+move() {
+    setInterval(() => {
+        if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
+            this.positionX += 2.45;
+            this.otherDirection = false;
+        }
 
-    moveLeft() {
-        setInterval(() => {
-            if(this.world.keyboard.LEFT && this.positionX > 0) {
-                this.positionX -= 2.45;
-                this.otherDirection = true;
-        }    
-             this.world.camera_x = -this.positionX;
-        }, 1000 / 60);
-    }
+        if (this.world.keyboard.LEFT && this.positionX > 0) {
+            this.positionX -= 2.45;
+            this.otherDirection = true;
+        }
+
+        this.world.camera_x = -this.positionX;
+    }, 1000 / 60);
+}
 
     jump() {
         
