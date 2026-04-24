@@ -55,20 +55,32 @@ animate() {
 move() {
     setInterval(() => {
         if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
-            this.positionX += 2.45;
-            this.otherDirection = false;
+           this.moveRight();
         }
 
         if (this.world.keyboard.LEFT && this.positionX > 0) {
-            this.positionX -= 2.45;
-            this.otherDirection = true;
+            this.moveLeft();
+        }
+
+        if(this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jump();
         }
 
         this.world.camera_x = -this.positionX;
     }, 1000 / 60);
 }
 
+    moveRight() {
+        this.positionX += 2.45;
+        this.otherDirection = false;
+    }
+
+    moveLeft() {
+        this.positionX -= 2.45;
+        this.otherDirection = true;
+    }
+
     jump() {
-        
+        this.speedY = 15;
     }
 }
