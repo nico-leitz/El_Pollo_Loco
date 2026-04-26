@@ -1,28 +1,9 @@
-class MoveableObject {
-    positionX = 520;
-    positionY = 250;
-    height = 150;
-    width = 100;
-    img;
-    imgCache = {};
+class MoveableObject extends DrawableObject {
     otherDirection;
     speedY = 0;
     acceleration = 1 ;
     energy = 100;
     lastHit = 0;
-
-    loadImage(path) {
-        this.img = new Image(); 
-        this.img.src = path;
-    }
-
-    loadImages(arr) {
-        arr.forEach(path => {
-            let img = new Image();
-            img.src = path;
-            this.imgCache[path] = img;
-        });
-    }
 
     playAnimation(images) {
         let i = this.currentImage % images.length;
