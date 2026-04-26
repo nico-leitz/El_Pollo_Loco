@@ -8,7 +8,7 @@ class MoveableObject {
     otherDirection;
     speedY = 0;
     acceleration = 1 ;
-    energy = 100;
+    energy = 100; 
 
     loadImage(path) {
         this.img = new Image(); 
@@ -48,5 +48,16 @@ class MoveableObject {
            this.positionY + this.height > moveableObject.positionY &&
            this.positionX < moveableObject.positionX + moveableObject.width &&
            this.positionY < moveableObject.positionY + moveableObject.height;
-}
+    }
+
+    hit() {
+        this.energy -= 5;
+        if(this.energy < 0) {
+            this.energy = 0;
+        }
+    }
+
+    isDead() {
+        return this.energy == 0;
+    }
 }
