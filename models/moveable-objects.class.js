@@ -8,7 +8,8 @@ class MoveableObject {
     otherDirection;
     speedY = 0;
     acceleration = 1 ;
-    energy = 100; 
+    energy = 100;
+    lastHit = 0;
 
     loadImage(path) {
         this.img = new Image(); 
@@ -55,6 +56,15 @@ class MoveableObject {
         if(this.energy < 0) {
             this.energy = 0;
         }
+        else {
+            this.lastHit = new Date().getTime();
+        }
+    }
+
+    isHurt() {
+        let timepassed = new Date().getTime() - this.lastHit;
+        timepassed = timepassed / 250;
+        return timepassed < 5;
     }
 
     isDead() {
