@@ -88,29 +88,33 @@ class Character extends MoveableObject {
         this.move();
     }
 
-    animate() {
-        setInterval(() => {
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } 
-            else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } 
-            else if (this.isAboveGround()) {
-                this.playAnimation(this.IMAGES_JUMPING);
-            } 
-            else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                this.playAnimation(this.IMAGES_WALKING);
-                this.lastAction = new Date().getTime(); 
-            } 
-            else if (this.isLongIdle()) {
-                this.playAnimation(this.IMAGES_LONG_IDLE);
-            } 
-            else {
-                this.playAnimation(this.IMAGES_IDLE);
-            }
-        }, 200);
-    }
+  animate() {
+    setInterval(() => {
+        if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+        } 
+        else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } 
+        else if (this.isAboveGround()) {
+            this.playAnimation(this.IMAGES_JUMPING);
+        } 
+        else if (this.world.keyboard.D) {
+            this.lastAction = new Date().getTime();
+            this.loadImage('img/2_character_pepe/1_idle/idle/I-1.png');
+        }
+        else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.playAnimation(this.IMAGES_WALKING);
+            this.lastAction = new Date().getTime();
+        } 
+        else if (this.isLongIdle()) {
+            this.playAnimation(this.IMAGES_LONG_IDLE);
+        } 
+        else {
+            this.playAnimation(this.IMAGES_IDLE);
+        }
+    }, 200);
+}
 
     move() {
         setInterval(() => {
