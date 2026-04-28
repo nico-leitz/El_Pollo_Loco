@@ -1,5 +1,5 @@
 class Character extends MoveableObject {
-    positionX = 0;
+    positionX = 800;
     positionY = 140;
     height = 280;
     width = 140;
@@ -41,6 +41,7 @@ class Character extends MoveableObject {
 
     ];
 
+
     currentImage = 0;
     world;
    
@@ -61,21 +62,19 @@ class Character extends MoveableObject {
     animate() {
         setInterval(() => {
             if (this.isDead()) {
-                this.playAnimation(this.IMAGES_JUMPING);
+                this.playAnimation(this.IMAGES_DEAD);
             } 
             else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
-            }
-            else if (!this.isHurt()) {          
-                this.loadImage("img/2_character_pepe/2_walk/W-21.png");
-            }
+            } 
             else if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
             } 
+            else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                this.playAnimation(this.IMAGES_WALKING);
+            } 
             else {
-                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                    this.playAnimation(this.IMAGES_WALKING);
-                }
+                this.loadImage('img/2_character_pepe/2_walk/W-21.png');
             }
         }, 100);
     }
