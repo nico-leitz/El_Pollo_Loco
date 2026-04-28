@@ -1,8 +1,30 @@
-const startBtnRef = document.getElementById("start_game_btn");
+const canvasRef = document.getElementById('canvas');
+const startScreenRef = document.getElementById('start_screen');
+const gameOverScreenRef = document.getElementById('game_over_screen');
+const startBtnRef = document.getElementById('start_game_btn');
+const gameOverBtnRef = document.getElementById('game_over_btn');
 
 startBtnRef.addEventListener('click', () => {
-   let startScreen = document.getElementById('start_screen');
-   startScreen.classList.add('d_none');
-   startBtnRef.classList.add('d_none');
-   init();
+    startScreenRef.classList.add('d_none');
+    startBtnRef.classList.add('d_none');
+    
+    gameOverScreenRef.classList.add('d_none');
+    gameOverBtnRef.classList.add('d_none');
+    
+    init(); 
 });
+
+gameOverBtnRef.addEventListener('click', () => {
+    gameOverScreenRef.classList.add('d_none');
+    gameOverBtnRef.classList.add('d_none');
+    
+    startScreenRef.classList.remove('d_none');
+    startBtnRef.classList.remove('d_none');
+});
+
+function showGameOverScreen() {
+    canvasRef.classList.add('d_none');
+    
+    gameOverScreenRef.classList.remove('d_none');
+    gameOverBtnRef.classList.remove('d_none');
+}

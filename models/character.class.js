@@ -3,6 +3,7 @@ class Character extends MoveableObject {
     positionY = 140;
     height = 280;
     width = 140;
+    isGameOver = false;
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -86,6 +87,7 @@ class Character extends MoveableObject {
         this.applyGravity();
         this.animate();
         this.move();
+        this.checkGameOver();
     }
 
   animate() {
@@ -146,5 +148,15 @@ class Character extends MoveableObject {
 
     jump() {
         this.speedY = 15;
+    }
+
+    checkGameOver() {
+        setInterval(() => {
+            if (this.isDead() && !this.isGameOver) {
+                this.isGameOver = true;
+                console.log("Pepe is dead");
+                showGameOverScreen();
+            }
+        }, 100);
     }
 }
