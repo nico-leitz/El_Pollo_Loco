@@ -42,9 +42,10 @@ class World {
             if (this.character.isColliding(enemy)) {
                 this.character.hit();
                 this.statusBar.setHealth(this.character.energy);
+                
             }
         });
-    }
+    };
 
 
     draw() {
