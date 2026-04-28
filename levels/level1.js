@@ -1,4 +1,8 @@
-const level1 = new Level(
+let level1;
+
+function initLevel() {
+
+    level1 = new Level(
      enemies = [
         new Chicken(),
         new Chicken(),
@@ -12,7 +16,7 @@ const level1 = new Level(
         new SmallChicken(),
         new Endboss()
     ],
-    
+
     clouds = [
         new Cloud(),
         new Cloud(),
@@ -53,3 +57,5 @@ const level1 = new Level(
         new BackgroundObjects("img/5_background/layers/1_first_layer/2.png", 719 * 5),
     ]
 );
+};
+

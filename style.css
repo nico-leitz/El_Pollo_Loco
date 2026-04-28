@@ -103,6 +103,16 @@ canvas {
     transform: translateX(-50%) scale(0.9);
 }
 
+.canvas-container {
+    position: relative;
+}
+
+#fullscreen_btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 30;
+}
 
 .d_none {
  display: none;
