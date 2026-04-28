@@ -56,4 +56,9 @@ class MoveableObject extends DrawableObject {
     isDead() {
         return this.energy == 0;
     }
+
+    isLongIdle() {
+        let timePassed = new Date().getTime() - this.lastAction;
+        return timePassed > 15000; 
+    }
 }
