@@ -1,9 +1,8 @@
-class CollectableObjects {
+class CollectableObjects extends DrawableObject {
 
-    
-
-    constructor(params) {
-        
+    constructor() {
+       super();
+      
     }
 
 

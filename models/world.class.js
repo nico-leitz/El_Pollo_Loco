@@ -2,6 +2,17 @@ class World {
     character = new Character();
     level = level1;
 
+    coins = [
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+    ];
+
     canvas;
     ctx;
     keyboard;
@@ -63,6 +74,7 @@ class World {
 
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.coins);
         this.addObjectsToMap(this.throwableObjects);
 
         this.ctx.translate(Math.round(-this.camera_x), 0);
