@@ -31,8 +31,17 @@ function showGameOverScreen() {
     
     gameOverScreenRef.classList.remove('d_none');
     gameOverBtnRef.classList.remove('d_none');
+
+    resetAllIntervals();
+    
+    world.character.walkAudio.pause();
+    world.character.damageAudio.pause();
 };
 
 function resetAllIntervals() {
-    window.clearInterval();
-};
+    let goThroughAllIntervalIDs = setInterval(() => {}, 1000);
+    
+    for (let i = 0; i <= goThroughAllIntervalIDs; i++) {
+        window.clearInterval(i);
+    }
+}
