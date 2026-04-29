@@ -14,4 +14,10 @@ class CoinObjects extends CollectableObjects {
         this.positionX = 200 + Math.random() * 1000;
         this.positionY = 150 + Math.random() * 150;
     }
+
+    animate() {
+    setInterval(() => {
+        this.playAnimation(this.IMAGES); 
+    }, 500);
+}
 }

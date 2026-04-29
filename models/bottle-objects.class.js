@@ -15,4 +15,10 @@ class BottleObjects extends CollectableObjects {
         this.positionX = 500 + Math.random() * 2000;
         this.positionY = 340;
     }
+
+    animate() {
+    setInterval(() => {
+        this.playAnimation(this.IMAGES); 
+    }, 500);
+}
 }
