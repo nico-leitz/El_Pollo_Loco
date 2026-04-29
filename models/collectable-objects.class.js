@@ -1,0 +1,10 @@
+class CollectableObjects {
+
+    
+
+    constructor(params) {
+        
+    }
+
+
+}
