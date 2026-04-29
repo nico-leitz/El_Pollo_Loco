@@ -13,6 +13,16 @@ class World {
         new CoinObjects(),
     ];
 
+    bottles = [
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),   
+    ];
+
     canvas;
     ctx;
     keyboard;
@@ -75,6 +85,7 @@ class World {
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.coins);
+        this.addObjectsToMap(this.bottles);
         this.addObjectsToMap(this.throwableObjects);
 
         this.ctx.translate(Math.round(-this.camera_x), 0);

@@ -1,7 +1,7 @@
 class BottleObjects extends CollectableObjects {
 
-    width = 150;
-    height = 150;
+    width = 100;
+    height = 100;
 
     IMAGES = [
         'img/6_salsa_bottle/1_salsa_bottle_on_ground.png',
@@ -13,6 +13,6 @@ class BottleObjects extends CollectableObjects {
         this.loadImage(this.IMAGES[0]); 
         this.loadImages(this.IMAGES); 
         this.positionX = 500 + Math.random() * 2000;
-        this.positionY = 150;
+        this.positionY = 340;
     }
 }
