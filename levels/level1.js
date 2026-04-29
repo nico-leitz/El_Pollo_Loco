@@ -55,7 +55,28 @@ function initLevel() {
         new BackgroundObjects("img/5_background/layers/3_third_layer/2.png", 719 * 5),
         new BackgroundObjects("img/5_background/layers/2_second_layer/2.png", 719 * 5),
         new BackgroundObjects("img/5_background/layers/1_first_layer/2.png", 719 * 5),
-    ]
-);
+    ],
+
+    coins = [
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+        new CoinObjects(),
+    ],
+
+     bottles = [
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),
+        new BottleObjects(),   
+    ],
+  );
 };
 
