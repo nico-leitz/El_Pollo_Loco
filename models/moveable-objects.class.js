@@ -4,6 +4,8 @@ class MoveableObject extends DrawableObject {
     acceleration = 1 ;
     energy = 100;
     lastHit = 0;
+    walkAudio;
+    damageAudio;
 
     playAnimation(images) {
         let i = this.currentImage % images.length;
