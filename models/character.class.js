@@ -68,10 +68,9 @@ class Character extends MoveableObject {
         'img/2_character_pepe/1_idle/long_idle/I-20.png'
     ];
 
-
-
     currentImage = 0;
     world;
+    walkAudio = new Audio('sounds/character/characterRun.mp3'); 
    
     constructor() {
         super();
@@ -116,16 +115,26 @@ class Character extends MoveableObject {
             this.playAnimation(this.IMAGES_IDLE);
         }
     }, 200);
-}
+};
 
     move() {
         setInterval(() => {
             if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
             this.moveRight();
+            this.walkAudio.volume = 0.02;
+            this.walkAudio.play();
+            }
+            else {
+                this.walkAudio.pause();
             }
 
             if (this.world.keyboard.LEFT && this.positionX > 0) {
                 this.moveLeft();
+                this.walkAudio.volume = 0.02;
+                this.walkAudio.play();
+            } 
+            else {
+                this.walkAudio.pause();
             }
 
             if(this.world.keyboard.SPACE && !this.isAboveGround()) {
@@ -143,7 +152,7 @@ class Character extends MoveableObject {
 
     moveLeft() {
         this.positionX -= 2.45;
-        this.otherDirection = true;
+        this.otherDirection = true;  
     }
 
     jump() {

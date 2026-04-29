@@ -15,4 +15,4 @@ class SmallChicken extends Chicken {
         this.loadImages(this.IMAGES_WALKING);
         this.speed = 0.7 + Math.random() * 1.5; 
     }
-}
+};
