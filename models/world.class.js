@@ -33,6 +33,7 @@ class World {
             this.checkCollisions();
             this.checkThrowObjects();
             this.checkCollisionsWithChicken();
+            this.checkCollisionsWithBottles();
         }, 200);
     }
 
@@ -67,6 +68,16 @@ class World {
             }
         }
       });
+    };
+
+    checkCollisionsWithBottles() {
+        this.level.bottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle) && this.bottleBar.amount < 100) {
+                this.level.bottles.splice(index, 1);
+                this.bottleBar.amount += 20;
+                this.bottleBar.setPercentage(this.bottleBar.amount);
+            }
+        });
     };
 
 

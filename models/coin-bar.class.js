@@ -1,5 +1,6 @@
 class CoinBar extends StatusBar {
-    
+    amount= 0;
+
     IMAGES = [
         'img/7_statusbars/1_statusbar/1_statusbar_coin/orange/0.png',
         'img/7_statusbars/1_statusbar/1_statusbar_coin/orange/20.png',
