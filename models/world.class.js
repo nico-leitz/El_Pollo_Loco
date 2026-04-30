@@ -32,6 +32,7 @@ class World {
         setInterval(() => {
             this.checkCollisions();
             this.checkThrowObjects();
+            this.checkCollisionsWithChicken();
         }, 200);
     }
 
@@ -48,10 +49,24 @@ class World {
                 this.character.hit();
                 this.healthBar.setPercentage(this.character.energy);
                 this.coinBar.setPercentage(this.coinBar.amount);
-                this.bottleBarhBar.setPercentage(this.bottleBar.amount);
+                this.bottleBar.setPercentage(this.bottleBar.amount);
                 
             }
         });
+    };
+
+    checkCollisionsWithChicken() {
+    this.level.enemies.forEach((enemy, index) => {
+        if (this.character.isColliding(enemy)) {
+            if (this.character.isAboveGround() && this.character.speedY <= 0) {
+                this.level.enemies.splice(index, 1);
+                this.character.speedY = 15;
+                this.character.lastHit = 0;
+            } else {
+                this.character.hit(20);
+            }
+        }
+      });
     };
 
 

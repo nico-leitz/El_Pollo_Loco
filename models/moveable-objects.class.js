@@ -3,6 +3,7 @@ class MoveableObject extends DrawableObject {
     speedY = 0;
     acceleration = 1 ;
     energy = 100;
+    damage = 20;
     lastHit = 0;
     walkAudio;
     damageAudio;
@@ -42,14 +43,15 @@ class MoveableObject extends DrawableObject {
            this.positionY < moveableObject.positionY + moveableObject.height;
     }
 
-    hit() {
-        this.energy -= 20;
-        if(this.energy < 0) {
-            this.energy = 0;
-        }
-        else {
-            this.lastHit = new Date().getTime();
-        }
+   hit(damage) {
+    let damageValue = damage || 0; 
+    
+    this.energy -= damageValue;
+
+    if(this.energy <= 0) {
+        this.energy = 0;
+    }
+    this.lastHit = new Date().getTime();
     }
 
     isHurt() {

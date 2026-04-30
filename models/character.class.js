@@ -86,7 +86,7 @@ class Character extends MoveableObject {
         this.snoringAudio = new Audio('sounds/character/characterSnoring.mp3');
         this.deadAudio = new Audio('sounds/character/characterDead.wav')
         
-
+        this.energy = 100;
         this.lastAction = new Date().getTime();
         this.applyGravity();
         this.animate();
