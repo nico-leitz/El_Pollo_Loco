@@ -34,6 +34,8 @@ class World {
             this.checkThrowObjects();
             this.checkCollisionsWithChicken();
             this.checkCollisionsWithBottles();
+            this.checkThrowObjects();
+            this.checkCollisionsWithThrowableBottles();
         }, 200);
     }
 
@@ -80,6 +82,36 @@ class World {
         });
     };
 
+    checkCollisionsWithThrowableBottles() {
+        this.throwableObjects.forEach((bottle, bottleIndex) => {
+            this.level.enemies.forEach((enemy, enemyIndex) => {
+                if (bottle.isColliding(enemy)) {
+                    this.throwableObjects.splice(bottleIndex, 1);
+                    this.level.enemies.splice(enemyIndex, 1);
+                }
+            });
+        });
+    };
+
+    checkThrowObjects() {
+        if (this.keyboard.D && this.bottleBar.amount > 0) {
+            let bottle = new ThrowableObject(this.character.positionX + 100, this.character.positionY + 100);
+            this.throwableObjects.push(bottle);
+            this.bottleBar.amount -= 20;
+            this.bottleBar.setPercentage(this.bottleBar.amount);
+        }
+    };
+
+    checkCollisionsWithThrowableBottles() {
+        this.throwableObjects.forEach((bottle, bottleIndex) => {
+            this.level.enemies.forEach((enemy, enemyIndex) => {
+                if (bottle.isColliding(enemy)) {
+                    this.throwableObjects.splice(bottleIndex, 1);
+                    this.level.enemies.splice(enemyIndex, 1);
+                }
+            });
+        });
+    };
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
