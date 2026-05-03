@@ -28,16 +28,14 @@ class World {
         this.character.world = this;
     }
 
-    run() {
+   run() {
         setInterval(() => {
-            this.checkCollisions();
-            this.checkThrowObjects();
             this.checkCollisionsWithChicken();
             this.checkCollisionsWithBottles();
-            this.checkThrowObjects();
-            this.checkCollisionsWithThrowableBottles();
             this.checkCollisionsWithCoins();
-        }, 200);
+            this.checkCollisionsWithThrowableBottles();
+            this.checkThrowObjects();
+        }, 100);
     }
 
     checkThrowObjects() {
@@ -60,17 +58,18 @@ class World {
     };
 
     checkCollisionsWithChicken() {
-    this.level.enemies.forEach((enemy, index) => {
-        if (this.character.isColliding(enemy)) {
-            if (this.character.isAboveGround() && this.character.speedY <= 0) {
-                this.level.enemies.splice(index, 1);
-                this.character.speedY = 15;
-                this.character.lastHit = 0;
-            } else {
-                this.character.hit(20);
+        this.level.enemies.forEach((enemy, index) => {
+            if (this.character.isColliding(enemy)) {
+                if (this.character.speedY < 0) { 
+                    this.level.enemies.splice(index, 1);
+                    this.character.speedY = 15;
+                    this.character.lastHit = 0;
+                } else {
+                    this.character.hit(20);
+                    this.healthBar.setPercentage(this.character.energy);
+                }
             }
-        }
-      });
+        });
     };
 
     checkCollisionsWithBottles() {

@@ -1,33 +1,35 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
+    background-color: #2f2f2f; 
 }
 
 .display {
-    height: 100dvh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    gap: 20px;
 }
 
 .canvas-container {
     position: relative;
     width: 720px;
     height: 480px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    border-radius: 4px;
+    overflow: hidden; 
 }
 
 canvas {
     background-color: black;
     display: block;
+    width: 100%;
+    height: 100%;
 }
+
 
 #start_screen {
     position: absolute;
@@ -35,35 +37,8 @@ canvas {
     left: 0;
     width: 100%; 
     height: 100%; 
+    object-fit: cover;
     z-index: 10;
-}
-
-#start_game_btn {
-    position: absolute;
-    
-    left: 50%;
-    bottom: 2%;
-    transform: translateX(-50%);
-    
-  
-    background-color: #ff8f00;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    padding: 5px 5px;
-    border: 4px solid #5d4037; 
-    border-radius: 10px;
-    cursor: pointer;
-    z-index: 20;
-}
-
-#start_game_btn:hover {
-    background-color: #efcb5e; 
-}
-
-
-#start_game_btn:active {
-    transform: translateX(-50%) scale(0.9);
 }
 
 #game_over_screen {
@@ -72,39 +47,56 @@ canvas {
     left: 0;
     width: 100%; 
     height: 100%; 
+    object-fit: contain;
+    background-color: rgba(0,0,0,0.7); 
     z-index: 10;
+}
+
+.game_controls {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 80%;
+    display: flex;
+    justify-content: space-around; 
+    z-index: 20;
+}
+
+.game_controls button, #game_over_btn, #close_controll_btn {
+    padding: 12px 24px;
+    font-size: 20px;
+    font-family: 'Arial Black', sans-serif;
+    text-transform: uppercase;
+    background-color: #ff9900;
+    color: white;
+    border: 3px solid #5d4037; 
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 100ms ease-in-out;
+    box-shadow: 0 4px 0 #5d4037;
+}
+
+
+.game_controls button:hover, #game_over_btn:hover {
+    background-color: #ffb84d;
+    filter: brightness(1.1);
+}
+
+.game_controls button:active, #game_over_btn:active {
+    box-shadow: none;
+    transform: translateY(4px);
 }
 
 #game_over_btn {
     position: absolute;
-    
-    left: 50%;
-    bottom: 2%;
-    transform: translateX(-50%);
-    
-  
-    background-color: #ff8f00;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    padding: 5px 5px;
-    border: 4px solid #5d4037; 
-    border-radius: 10px;
-    cursor: pointer;
-    z-index: 20;
-}
-
-#game_over_btn:hover {
-    background-color: #efcb5e; 
-}
-
-
-#game_over_btn:active {
-    transform: translateX(-50%) scale(0.9);
-}
-
-.canvas-container {
-    position: relative;
+    bottom: 50px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: fit-content;
+    z-index: 25;
 }
 
 #fullscreen_btn {
@@ -112,8 +104,11 @@ canvas {
     right: 10px;
     top: 10px;
     z-index: 30;
+    opacity: 0.7;
 }
 
+#fullscreen_btn:hover { opacity: 1; }
+
 .d_none {
- display: none;
+    display: none !important;
 }

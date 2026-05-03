@@ -8,19 +8,30 @@
 </head>
 <body>
 
-    <div class="display">
-        <h1>EL POLLO LOCO</h1>
-        <div id="canvas_container" class="canvas-container"> <button id="fullscreen_btn">Fullscreen</button>
-            <img id="start_screen" src="img/9_intro_outro_screens/start/startscreen_2.png" alt="start screen">
-            <img id="game_over_screen" class="d_none" src="img/You won, you lost/Game Over.png" alt="game over screen">
-            <button id="start_game_btn">Start Game!</button>
-            <button id="game_over_btn" class="d_none">Try Again!</button>
-            
-            <canvas id="canvas" width="720" height="480">
+  <div id="canvas_container" class="canvas-container"> 
+    <button id="fullscreen_btn">Fullscreen</button>
+    <img id="start_screen" src="img/9_intro_outro_screens/start/startscreen_2.png" alt="start screen">
+    <img id="game_over_screen" class="d_none" src="img/You won, you lost/Game Over.png" alt="game over screen">
+    
+    <!-- NEU: Der Wrapper für die Buttons -->
+    <div id="game_controls" class="game_controls">
+    <button id="start_game_btn">Start Game!</button>
+    <button id="controll_btn">Controll</button>
+</div>
 
-            </canvas>
-        </div>
+    <button id="game_over_btn" class="d_none">Try Again!</button>
+    
+    <!-- NEU: Das Panel, das die Steuerung anzeigt (Standardmäßig versteckt) -->
+    <div id="controll_panel" class="controll d_none">
+        <h2>Steuerung</h2>
+        <p><b>W, A, S, D</b> oder <b>Pfeiltasten</b> - Bewegen</p>
+        <p><b>SPACE</b> - Springen</p>
+        <p><b>D</b> - Flasche werfen</p>
+        <button id="close_controll_btn">Schließen</button>
     </div>
+    
+    <canvas id="canvas" width="720" height="480"></canvas>
+</div>
 
 
     <script src="/js/functions.js"></script>

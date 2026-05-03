@@ -6,9 +6,16 @@ const gameOverBtnRef = document.getElementById('game_over_btn');
 const fullscreenRef =  document.getElementById("canvas_container");
 const fullscreenBtnRef = document.getElementById('fullscreen_btn');
 
+const gameControlsRef = document.getElementById('game_controls');
+const controllBtnRef = document.getElementById('controll_btn');
+const controllPanelRef = document.getElementById('controll_panel');
+const closeControllBtnRef = document.getElementById('close_controll_btn');
+
+
 startBtnRef.addEventListener('click', () => {
     startScreenRef.classList.add('d_none');
-    startBtnRef.classList.add('d_none');
+    gameControlsRef.classList.add('d_none'); 
+    controllPanelRef.classList.add('d_none'); 
     
     gameOverScreenRef.classList.add('d_none');
     gameOverBtnRef.classList.add('d_none');
@@ -16,14 +23,25 @@ startBtnRef.addEventListener('click', () => {
     init(); 
 });
 
+
 gameOverBtnRef.addEventListener('click', () => {
     gameOverScreenRef.classList.add('d_none');
     gameOverBtnRef.classList.add('d_none');
     
     startScreenRef.classList.remove('d_none');
-    startBtnRef.classList.remove('d_none');
+    gameControlsRef.classList.remove('d_none'); 
 
     canvasRef.classList.remove('d_none');
+});
+
+
+controllBtnRef.addEventListener('click', () => {
+    controllPanelRef.classList.remove('d_none');
+});
+
+
+closeControllBtnRef.addEventListener('click', () => {
+    controllPanelRef.classList.add('d_none');
 });
 
 function showGameOverScreen() {
