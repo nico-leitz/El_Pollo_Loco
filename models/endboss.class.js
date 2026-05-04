@@ -7,6 +7,7 @@ class Endboss extends MoveableObject {
     speed = 1.5;
     startX = 3000;
     isInDeadAnimation = false;
+    damage = 20;
 
     IMAGES_WALKING = [
         'img/4_enemie_boss_chicken/1_walk/G1.png',

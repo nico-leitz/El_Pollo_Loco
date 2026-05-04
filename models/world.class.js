@@ -25,16 +25,18 @@ class World {
     }
 
     setWorld() {
-    this.character.world = this;
-    let boss = this.level.enemies.find(e => e instanceof Endboss);
-    if (boss) {
-        boss.world = this;
+        this.character.world = this;
+        this.endboss = this.level.enemies.find(e => e instanceof Endboss);
+        
+        if (this.endboss) {
+            this.endboss.world = this;
+        }
     }
-}
 
    run() {
         setInterval(() => {
             this.checkCollisionsWithChicken();
+            this.checkCollisionWithEndboss();
             this.checkCollisionsWithBottles();
             this.checkCollisionsWithCoins();
             this.checkCollisionsWithThrowableBottles();
@@ -77,6 +79,17 @@ class World {
                         this.character.hit(20);
                         this.healthBar.setPercentage(this.character.energy);
                     }
+                }
+            }
+        });
+    }
+
+    checkCollisionWithEndboss() {
+        this.level.enemies.forEach((enemy) => {
+            if (enemy instanceof Endboss && this.character.isColliding(enemy)) {
+                if (!this.character.isHurt()) { 
+                    this.character.hit(20);
+                    this.healthBar.setPercentage(this.character.energy);
                 }
             }
         });
