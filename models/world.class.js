@@ -52,31 +52,33 @@ class World {
                 this.healthBar.setPercentage(this.character.energy);
                 this.coinBar.setPercentage(this.coinBar.amount);
                 this.bottleBar.setPercentage(this.bottleBar.amount);
+                bottle.throwBottleAnimation();
+                this.endbossStatusBar.setPercentage(this.endboss.energy);
                 
             }
         });
     };
 
    checkCollisionsWithChicken() {
-    this.level.enemies.forEach((enemy, index) => {
-        if (this.character.isColliding(enemy)) {
-            
-            let isFalling = this.character.speedY < 0;
-            let isAboveEnemy = (this.character.positionY + this.character.height) < (enemy.positionY + enemy.height / 2);
+        this.level.enemies.forEach((enemy, index) => {
+            if (this.character.isColliding(enemy)) {
+                
+                let isFalling = this.character.speedY < 0;
+                let isAboveEnemy = (this.character.positionY + this.character.height) < (enemy.positionY + enemy.height / 2);
 
-            if (isFalling && isAboveEnemy) { 
-                this.level.enemies.splice(index, 1);
-                this.character.speedY = 15;
-                this.character.lastHit = 0; 
-            } else {
-                if (!this.character.isHurt()) { 
-                    this.character.hit(20);
-                    this.healthBar.setPercentage(this.character.energy);
+                if (isFalling && isAboveEnemy) { 
+                    this.level.enemies.splice(index, 1);
+                    this.character.speedY = 15;
+                    this.character.lastHit = 0; 
+                } else {
+                    if (!this.character.isHurt()) { 
+                        this.character.hit(20);
+                        this.healthBar.setPercentage(this.character.energy);
+                    }
                 }
             }
-        }
-    });
-}
+        });
+    }
 
     checkCollisionsWithBottles() {
         this.level.bottles.forEach((bottle, index) => {
@@ -101,7 +103,7 @@ class World {
 
     checkThrowObjects() {
         if (this.keyboard.D && this.bottleBar.amount > 0) {
-            let bottle = new ThrowableObject(this.character.positionX + 100, this.character.positionY + 100);
+            let bottle = new ThrowableObject(this.character.positionX + 100, this.character.positionY + 100, this.character.otherDirection);
             this.throwableObjects.push(bottle);
             this.bottleBar.amount -= 20;
             this.bottleBar.setPercentage(this.bottleBar.amount);
