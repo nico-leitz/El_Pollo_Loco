@@ -57,28 +57,26 @@ class World {
         });
     };
 
-    checkCollisionsWithChicken() {
-        this.level.enemies.forEach((enemy, index) => {
-            if (this.character.isColliding(enemy)) {
-                
-                let isFalling = this.character.speedY < 0;
+   checkCollisionsWithChicken() {
+    this.level.enemies.forEach((enemy, index) => {
+        if (this.character.isColliding(enemy)) {
+            
+            let isFalling = this.character.speedY < 0;
+            let isAboveEnemy = (this.character.positionY + this.character.height) < (enemy.positionY + enemy.height / 2);
 
-                let isAboveEnemy = this.character.positionY + this.character.height > enemy.positionY;
-
-                if (isFalling && isAboveEnemy) { 
-                    this.level.enemies.splice(index, 1);
-                
-                    this.character.speedY = 15;
-                    this.character.lastHit = 0; 
-                } else {
-                    if (!this.character.isHurt()) { 
-                        this.character.hit(20);
-                        this.healthBar.setPercentage(this.character.energy);
-                    }
+            if (isFalling && isAboveEnemy) { 
+                this.level.enemies.splice(index, 1);
+                this.character.speedY = 15;
+                this.character.lastHit = 0; 
+            } else {
+                if (!this.character.isHurt()) { 
+                    this.character.hit(20);
+                    this.healthBar.setPercentage(this.character.energy);
                 }
             }
-        });
-    };
+        }
+    });
+}
 
     checkCollisionsWithBottles() {
         this.level.bottles.forEach((bottle, index) => {
