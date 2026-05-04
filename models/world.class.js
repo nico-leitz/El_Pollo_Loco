@@ -60,16 +60,14 @@ class World {
     };
 
    checkCollisionsWithChicken() {
-        this.level.enemies.forEach((enemy, index) => {
-            if (this.character.isColliding(enemy)) {
-                
+        this.level.enemies.forEach((enemy) => {
+            if (!enemy.isDead && this.character.isColliding(enemy)) {
                 let isFalling = this.character.speedY < 0;
-                let isAboveEnemy = (this.character.positionY + this.character.height) < (enemy.positionY + enemy.height / 2);
+                let isAboveEnemy = (this.character.positionY + this.character.height) < (enemy.positionY + enemy.height);
 
                 if (isFalling && isAboveEnemy) { 
-                    this.level.enemies.splice(index, 1);
-                    this.character.speedY = 15;
-                    this.character.lastHit = 0; 
+                    this.killEnemy(enemy);
+                    this.character.speedY = 15; 
                 } else {
                     if (!this.character.isHurt()) { 
                         this.character.hit(20);
@@ -91,15 +89,15 @@ class World {
     };
 
     checkCollisionsWithThrowableBottles() {
-        this.throwableObjects.forEach((bottle, bottleIndex) => {
-            this.level.enemies.forEach((enemy, enemyIndex) => {
-                if (bottle.isColliding(enemy)) {
-                    this.throwableObjects.splice(bottleIndex, 1);
-                    this.level.enemies.splice(enemyIndex, 1);
+        this.throwableObjects.forEach((bottle) => {
+            this.level.enemies.forEach((enemy) => {
+                if (!bottle.afterBottleSplash && !enemy.isDead && bottle.isColliding(enemy)) {
+                    bottle.throwBottleAnimation();
+                    this.killEnemy(enemy);
                 }
             });
         });
-    };
+    }
 
     checkThrowObjects() {
         if (this.keyboard.D && this.bottleBar.amount > 0) {
@@ -110,16 +108,17 @@ class World {
         }
     };
 
-    checkCollisionsWithThrowableBottles() {
-        this.throwableObjects.forEach((bottle, bottleIndex) => {
-            this.level.enemies.forEach((enemy, enemyIndex) => {
-                if (bottle.isColliding(enemy)) {
-                    this.throwableObjects.splice(bottleIndex, 1);
-                    this.level.enemies.splice(enemyIndex, 1);
+   checkCollisionsWithThrowableBottles() {
+        this.throwableObjects.forEach((bottle) => {
+            this.level.enemies.forEach((enemy) => {
+                if (!bottle.afterBottleSplash && bottle.isColliding(enemy)) {
+                    console.log("Kollision erkannt mit:", enemy.constructor.name); 
+                    bottle.throwBottleAnimation();
+                    this.handleEndbossHit(enemy);
                 }
             });
         });
-    };
+    }
 
     checkCollisionsWithCoins() {
         this.level.coins.forEach((coin, index) => {
@@ -133,6 +132,37 @@ class World {
             }
         });
     };
+
+    killEnemy(enemy) {
+        if (!enemy.isDead) {
+            enemy.isDead = true;
+            
+            setTimeout(() => {
+                let index = this.level.enemies.indexOf(enemy);
+                if (index > -1) {
+                    this.level.enemies.splice(index, 1);
+                }
+            }, 1000);
+        }
+    }
+
+    handleEnemyHit(enemy) {
+        if (enemy instanceof Endboss) {
+            enemy.hit(20); 
+            this.endbossHealthBar.setPercentage(enemy.energy);
+        } else {
+            this.killEnemy(enemy);
+        }
+    }
+
+    handleEndbossHit(enemy) {
+        if (enemy instanceof Endboss) {
+            enemy.hit(20);
+            console.log('Boss Energie:', enemy.energy);
+        } else if (!enemy.isDead) {
+            this.killEnemy(enemy);
+        }
+    }
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -204,5 +234,12 @@ class World {
             moveableObject.positionX = moveableObject.positionX * -1;
             this.ctx.restore();
         }
+
+        if (moveableObject instanceof Endboss) {
+            this.ctx.beginPath();
+            this.ctx.rect(moveableObject.positionX, moveableObject.positionY, moveableObject.width, moveableObject.height);
+            this.ctx.strokeStyle = 'blue';
+            this.ctx.stroke();
+    }
     }
 }
