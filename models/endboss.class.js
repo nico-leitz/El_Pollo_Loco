@@ -3,33 +3,90 @@ class Endboss extends MoveableObject {
     height = 280;
     width = 280;
     currentImage = 0;
-    world;
     energy = 100;
+    speed = 1.5;
+    startX = 3000;
+    isInDeadAnimation = false;
 
     IMAGES_WALKING = [
-        'img/4_enemie_boss_chicken/2_alert/G5.png',
-        'img/4_enemie_boss_chicken/2_alert/G6.png',
-        'img/4_enemie_boss_chicken/2_alert/G7.png',
-        'img/4_enemie_boss_chicken/2_alert/G8.png',
-        'img/4_enemie_boss_chicken/2_alert/G9.png',
-        'img/4_enemie_boss_chicken/2_alert/G10.png',
-        'img/4_enemie_boss_chicken/2_alert/G11.png',
-        'img/4_enemie_boss_chicken/2_alert/G12.png'
+        'img/4_enemie_boss_chicken/1_walk/G1.png',
+        'img/4_enemie_boss_chicken/1_walk/G2.png',
+        'img/4_enemie_boss_chicken/1_walk/G3.png',
+        'img/4_enemie_boss_chicken/1_walk/G4.png',
+    ];
+
+    IMAGES_HURT = [
+        'img/4_enemie_boss_chicken/4_hurt/G21.png',
+        'img/4_enemie_boss_chicken/4_hurt/G22.png',
+        'img/4_enemie_boss_chicken/4_hurt/G23.png'
+    ];
+
+    IMAGES_DEAD = [
+        'img/4_enemie_boss_chicken/5_dead/G24.png',
+        'img/4_enemie_boss_chicken/5_dead/G25.png',
+        'img/4_enemie_boss_chicken/5_dead/G26.png'
     ];
 
     constructor() {
-        super()
+        super();
         this.loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
-        this.animate();
+        this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_DEAD);
 
-        this.positionX = 3000;
+        this.positionX = 3000; 
+        this.applyGravity();
+        this.animate();
     }
 
-     animate() {
+    animate() {
         setInterval(() => {
-           this.playAnimation(this.IMAGES_WALKING);
-        }, 300);
+            if (this.energy > 0) {
+                this.moveEndboss();
+            }
+        }, 1000 / 60);
+
+        setInterval(() => {
+            if (this.isDead()) {
+                this.handleDeath();
+            } else if (this.isHurt()) {
+                this.playAnimation(this.IMAGES_HURT);
+            } else {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
+        }, 200);
+    }
+
+    moveEndboss() {
+        if (this.otherDirection) {
+            this.positionX += this.speed;
+        } else {
+            this.positionX -= this.speed;
+        }
+
+        if (this.positionX > this.startX + 300) {
+            this.otherDirection = false;
+        } else if (this.positionX < this.startX - 300) {
+            this.otherDirection = true;
+        }
+    }
+
+    handleDeath() {
+        if (!this.isInDeadAnimation) {
+            this.currentImage = 0;
+            this.isInDeadAnimation = true;
+            this.speedY = 12;
+        }
+
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+            this.playAnimation(this.IMAGES_DEAD);
+        } else {
+            let lastImagePath = this.getLastImage(this.IMAGES_DEAD);
+            this.img = this.imgCache[lastImagePath];
+        }
+
+        this.positionY -= this.speedY; 
+        this.speedY -= 5; 
     }
 
     hit(damage) {
@@ -39,5 +96,9 @@ class Endboss extends MoveableObject {
         } else {
             this.lastHit = new Date().getTime();
         }
+    }
+
+    getLastImage(imagesArray) {
+        return imagesArray[imagesArray.length - 1];
     }
 }

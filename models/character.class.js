@@ -74,6 +74,7 @@ class Character extends MoveableObject {
     constructor() {
         super();
         this.loadImage("img/2_character_pepe/2_walk/W-21.png");
+        this.speed = 2.45;
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
@@ -84,7 +85,7 @@ class Character extends MoveableObject {
         this.damageAudio = new Audio('sounds/character/characterDamage.mp3');
         this.jumpAudio = new Audio('sounds/character/characterJump.wav');
         this.snoringAudio = new Audio('sounds/character/characterSnoring.mp3');
-        this.deadAudio = new Audio('sounds/character/characterDead.wav')
+        this.deadAudio = new Audio('sounds/character/characterDead.wav');
         
         this.energy = 100;
         this.lastAction = new Date().getTime();
@@ -95,36 +96,36 @@ class Character extends MoveableObject {
     }
 
   animate() {
-    setInterval(() => {
-        if (this.isDead()) {
-            this.playAnimation(this.IMAGES_DEAD);
-        } 
-        else if (this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
-            this.damageAudio.volume = 0.02;
-            this.damageAudio.play();     
-        } 
-        else if (this.isAboveGround()) {
-            this.playAnimation(this.IMAGES_JUMPING);  
-        } 
-        else if (this.world.keyboard.D) {
-            this.lastAction = new Date().getTime();
-            this.loadImage('img/2_character_pepe/1_idle/idle/I-1.png');
-        }
-        else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-            this.playAnimation(this.IMAGES_WALKING);
-            this.lastAction = new Date().getTime();
-        } 
-        else if (this.isLongIdle()) {
-            this.playAnimation(this.IMAGES_LONG_IDLE);
-            this.snoringAudio.volume = 0.02;
-            this.snoringAudio.play();   
-        } 
-        else {
-            this.playAnimation(this.IMAGES_IDLE);
-        }
-    }, 100);
-};
+        setInterval(() => {
+            if (this.isDead()) {
+                this.playAnimation(this.IMAGES_DEAD);
+            } 
+            else if (this.isHurt()) {
+                this.playAnimation(this.IMAGES_HURT);
+                this.damageAudio.volume = 0.02;
+                this.damageAudio.play();     
+            } 
+            else if (this.isAboveGround()) {
+                this.playAnimation(this.IMAGES_JUMPING);  
+            } 
+            else if (this.world.keyboard.D) {
+                this.lastAction = new Date().getTime();
+                this.loadImage('img/2_character_pepe/1_idle/idle/I-1.png');
+            }
+            else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                this.playAnimation(this.IMAGES_WALKING);
+                this.lastAction = new Date().getTime();
+            } 
+            else if (this.isLongIdle()) {
+                this.playAnimation(this.IMAGES_LONG_IDLE);
+                this.snoringAudio.volume = 0.02;
+                this.snoringAudio.play();   
+            } 
+            else {
+                this.playAnimation(this.IMAGES_IDLE);
+            }
+        }, 100);
+    };
 
     move() {
         setInterval(() => {

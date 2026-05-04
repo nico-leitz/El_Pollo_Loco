@@ -25,8 +25,12 @@ class World {
     }
 
     setWorld() {
-        this.character.world = this;
+    this.character.world = this;
+    let boss = this.level.enemies.find(e => e instanceof Endboss);
+    if (boss) {
+        boss.world = this;
     }
+}
 
    run() {
         setInterval(() => {
@@ -201,12 +205,10 @@ class World {
         });
     }
 
+
     addToMap(moveableObject) {
         if (moveableObject.otherDirection) {
-            this.ctx.save();
-            this.ctx.translate(moveableObject.width, 0);
-            this.ctx.scale(-1, 1);
-            moveableObject.positionX = moveableObject.positionX * -1; 
+            this.flipImage(moveableObject);
         }
 
         this.ctx.drawImage(
@@ -217,10 +219,30 @@ class World {
             moveableObject.height
         );
 
-        if (moveableObject instanceof Character || moveableObject instanceof Chicken) {
+        this.drawDebugFrames(moveableObject);
+
+        if (moveableObject.otherDirection) {
+            this.flipImageBack(moveableObject);
+        }
+    }
+
+    flipImage(moveableObject) {
+        this.ctx.save();
+        this.ctx.translate(moveableObject.width, 0);
+        this.ctx.scale(-1, 1);
+        moveableObject.positionX = moveableObject.positionX * -1;
+    }
+
+    flipImageBack(moveableObject) {
+        moveableObject.positionX = moveableObject.positionX * -1;
+        this.ctx.restore();
+    }
+
+    drawDebugFrames(moveableObject) {
+        if (moveableObject instanceof Character || moveableObject instanceof Chicken || moveableObject instanceof Endboss) {
             this.ctx.beginPath();
             this.ctx.lineWidth = '5';
-            this.ctx.strokeStyle = 'red';
+            this.ctx.strokeStyle = (moveableObject instanceof Endboss) ? 'green' : 'red';
             this.ctx.rect(
                 moveableObject.positionX, 
                 moveableObject.positionY, 
@@ -229,17 +251,5 @@ class World {
             );
             this.ctx.stroke();
         }
-        
-        if (moveableObject.otherDirection) {
-            moveableObject.positionX = moveableObject.positionX * -1;
-            this.ctx.restore();
-        }
-
-        if (moveableObject instanceof Endboss) {
-            this.ctx.beginPath();
-            this.ctx.rect(moveableObject.positionX, moveableObject.positionY, moveableObject.width, moveableObject.height);
-            this.ctx.strokeStyle = 'blue';
-            this.ctx.stroke();
     }
     }
-}

@@ -10,12 +10,21 @@ class MoveableObject extends DrawableObject {
     jumpAudio;
     snoringAudio;
     deadAudio;
+    speed = 0.15;
 
     playAnimation(images) {
         let i = this.currentImage % images.length;
         let path = images[i];
         this.img = this.imgCache[path];
         this.currentImage++;
+    }
+
+    moveRight() {
+        this.positionX += this.speed;
+    }
+
+    moveLeft() {
+        this.positionX -= this.speed;
     }
 
     applyGravity() {
