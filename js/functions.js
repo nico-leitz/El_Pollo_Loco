@@ -63,3 +63,33 @@ function resetAllIntervals() {
         window.clearInterval(i);
     }
 }
+
+fullscreenBtnRef.addEventListener('click', () => {
+    toggleFullscreen(fullscreenRef);
+});
+
+function toggleFullscreen(element) {
+    if (!document.fullscreenElement) {
+        enterFullscreen(element);
+    } else {
+        exitFullscreen();
+    }
+}
+
+function enterFullscreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) { 
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
+
+function exitFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    }
+}
