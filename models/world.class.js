@@ -68,7 +68,7 @@ class World {
                 if (isFalling && isAboveEnemy) { 
                     this.level.enemies.splice(index, 1);
                 
-                    this.character.speedY = 15;W
+                    this.character.speedY = 15;
                     this.character.lastHit = 0; 
                 } else {
                     if (!this.character.isHurt()) { 

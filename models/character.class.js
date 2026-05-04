@@ -126,37 +126,37 @@ class Character extends MoveableObject {
     }, 200);
 };
 
-move() {
-    setInterval(() => {
-        this.walkAudio.pause(); 
+    move() {
+        setInterval(() => {
+            this.walkAudio.pause(); 
 
-        if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
-            this.moveRight(); 
-            
-            if (!this.isAboveGround()) {
-                this.walkAudio.volume = 0.02;
-                this.walkAudio.play();
+            if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
+                this.moveRight(); 
+                
+                if (!this.isAboveGround()) {
+                    this.walkAudio.volume = 0.02;
+                    this.walkAudio.play();
+                }
             }
-        }
 
-        if (this.world.keyboard.LEFT && this.positionX > 0) {
-            this.moveLeft();
-            
-            if (!this.isAboveGround()) {
-                this.walkAudio.volume = 0.02;
-                this.walkAudio.play();
+            if (this.world.keyboard.LEFT && this.positionX > 0) {
+                this.moveLeft();
+                
+                if (!this.isAboveGround()) {
+                    this.walkAudio.volume = 0.02;
+                    this.walkAudio.play();
+                }
+            } 
+
+            if(this.world.keyboard.SPACE && !this.isAboveGround()) {
+                this.jump();
+                this.jumpAudio.volume = 0.02;
+                this.jumpAudio.play();
             }
-        } 
 
-        if(this.world.keyboard.SPACE && !this.isAboveGround()) {
-            this.jump();
-            this.jumpAudio.volume = 0.02;
-            this.jumpAudio.play();
-        }
-
-        this.world.camera_x = -this.positionX;
-    }, 1000 / 60);
-}
+            this.world.camera_x = -this.positionX + 100;
+        }, 1000 / 60);
+    }
 
     moveRight() {
         this.positionX += 2.45;
