@@ -123,7 +123,7 @@ class Character extends MoveableObject {
         else {
             this.playAnimation(this.IMAGES_IDLE);
         }
-    }, 200);
+    }, 100);
 };
 
     move() {
