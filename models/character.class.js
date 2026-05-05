@@ -137,34 +137,38 @@ class Character extends MoveableObject {
     };
 
     move() {
-        setInterval(() => {
-            this.walkAudio.pause(); 
+    setInterval(() => {
+        this.walkAudio.pause(); 
 
-            if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
-                this.moveRight(); 
-                
-                if (!this.isAboveGround()) {
-                    this.walkAudio.volume = 0.02;
-                    this.walkAudio.play();
-                }
+        if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
+            this.moveRight(); 
+            if (!this.isAboveGround()) {
+                this.walkAudio.volume = 0.02;
+                this.walkAudio.play();
             }
+        }
 
-            if (this.world.keyboard.LEFT && this.positionX > 0) {
-                this.moveLeft();
-                
-                if (!this.isAboveGround()) {
-                    this.walkAudio.volume = 0.02;
-                    this.walkAudio.play();
-                }
-            } 
-
-            if(this.world.keyboard.SPACE && !this.isAboveGround()) {
-                this.jump();
-                this.jumpAudio.volume = 0.02;
-                this.jumpAudio.play();
+        if (this.world.keyboard.LEFT && this.positionX > 0) {
+            this.moveLeft();
+            if (!this.isAboveGround()) {
+                this.walkAudio.volume = 0.02;
+                this.walkAudio.play();
             }
+        } 
 
-            this.world.camera_x = -this.positionX + 100;
+        if(this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jump();
+            this.jumpAudio.volume = 0.02;
+            this.jumpAudio.play();
+        }
+        
+        let cameraPosition = -this.positionX + 100;
+        if (cameraPosition > 0) {
+            cameraPosition = 0;
+        }
+        
+        this.world.camera_x = cameraPosition; 
+        
         }, 1000 / 60);
     }
 

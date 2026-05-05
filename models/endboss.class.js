@@ -9,6 +9,13 @@ class Endboss extends MoveableObject {
     isInDeadAnimation = false;
     damage = 20;
 
+    offset = {
+        top: 60,
+        bottom: 20,
+        left: 40,
+        right: 40
+    };
+
     IMAGES_WALKING = [
         'img/4_enemie_boss_chicken/1_walk/G1.png',
         'img/4_enemie_boss_chicken/1_walk/G2.png',
