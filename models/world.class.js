@@ -53,17 +53,23 @@ class World {
 
     checkCollisions() {
         this.level.enemies.forEach((enemy) => {
+            
             if (this.character.isColliding(enemy)) {
-                this.character.hit();
-                this.healthBar.setPercentage(this.character.energy);
-                this.coinBar.setPercentage(this.coinBar.amount);
-                this.bottleBar.setPercentage(this.bottleBar.amount);
-                bottle.throwBottleAnimation();
-                this.endbossStatusBar.setPercentage(this.endboss.energy);
                 
+                if (this.character.speedY < 0 && this.character.isAboveGround()) {
+                    if (enemy instanceof Chicken || enemy instanceof SmallChicken) {
+                        this.killEnemy(enemy);
+                        this.character.speedY = 15;
+                    }
+                } else {
+                    if (!this.character.isHurt() && !enemy.isDead) {
+                        this.character.hit(20);
+                        this.healthBar.setPercentage(this.character.energy);
+                    }
+                }
             }
         });
-    };
+    }
 
    checkCollisionsWithChicken() {
         this.level.enemies.forEach((enemy) => {

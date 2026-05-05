@@ -1,4 +1,4 @@
-class NonMovableObject extends DrawableObject {
+class NonMovableObject extends MoveableObject {
     currentImage = 0;
 
     playAnimation(images) {
