@@ -12,6 +12,18 @@ class MoveableObject extends DrawableObject {
     deadAudio;
     speed = 0.15;
 
+    offset = {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
+    };
+
+    rX;
+    rY;
+    rW;
+    rH;
+
     playAnimation(images) {
         let i = this.currentImage % images.length;
         let path = images[i];
@@ -45,11 +57,21 @@ class MoveableObject extends DrawableObject {
         }     
     }
 
-   isColliding(moveableObject) {
-    return this.positionX + this.width > moveableObject.positionX &&
-           this.positionY + this.height > moveableObject.positionY &&
-           this.positionX < moveableObject.positionX + moveableObject.width &&
-           this.positionY < moveableObject.positionY + moveableObject.height;
+    isColliding(moveableObject) {
+       this.getRealFrame();
+       moveableObject.getRealFrame();
+
+       return this.rX + this.rW > moveableObject.rX &&
+              this.rY + this.rH > moveableObject.rY &&
+              this.rX < moveableObject.rX + moveableObject.rW &&
+              this.rY < moveableObject.rY + moveableObject.rH;
+   }
+
+    getRealFrame() {
+        this.rX = this.positionX + this.offset.left;
+        this.rY = this.positionY + this.offset.top;
+        this.rW = this.width - this.offset.left - this.offset.right;
+        this.rH = this.height - this.offset.top - this.offset.bottom;
     }
 
    hit(damage) {

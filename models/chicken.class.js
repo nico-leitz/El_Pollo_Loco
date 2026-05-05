@@ -14,6 +14,14 @@ class Chicken extends MoveableObject {
         'img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
     ];
 
+    
+    offset = {
+        top: 10,
+        bottom: 10,
+        left: 10,
+        right: 10
+    };
+
     speed = 0.5 + Math.random() * 0.5;
 
     constructor() {
