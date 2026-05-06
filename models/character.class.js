@@ -77,57 +77,57 @@ class Character extends MoveableObject {
     }
 
     animate() {
-        setInterval(() => {
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } 
-            else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-                AudioManager.play(AudioManager.DAMAGE, 0.02);
-            } 
-            else if (this.isAboveGround()) {
-                this.playAnimation(this.IMAGES_JUMPING);  
-            } 
-            else if (this.world.keyboard.D) {
-                this.lastAction = new Date().getTime();
-                this.loadImage('img/2_character_pepe/1_idle/idle/I-1.png');
-            }
-            else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                this.playAnimation(this.IMAGES_WALKING);
-                this.lastAction = new Date().getTime();
-            } 
-            else if (this.isLongIdle()) {
-                this.playAnimation(this.IMAGES_LONG_IDLE);
-                AudioManager.play(AudioManager.SNORING, 0.02);
-            } 
-            else {
-                this.playAnimation(this.IMAGES_IDLE);
-            }
-        }, 100);
-    }
+    setInterval(() => {
+        if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+        } 
+        else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+            AudioManager.play(AudioManager.CHARACTER_DAMAGE, 0.02);
+        } 
+        else if (this.isAboveGround()) {
+            this.playAnimation(this.IMAGES_JUMPING);  
+        } 
+        else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.playAnimation(this.IMAGES_WALKING);
+            this.lastAction = new Date().getTime();
+            if(AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
+        } 
+        else if (this.isLongIdle()) {
+            this.playAnimation(this.IMAGES_LONG_IDLE);
+            AudioManager.play(AudioManager.CHARACTER_SNORING, 0.02);
+        } 
+        else {
+            this.playAnimation(this.IMAGES_IDLE);
+            if(AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
+        }
+    }, 100);
+}
 
     move() {
         setInterval(() => {
-            AudioManager.WALKING.pause(); 
+        if (AudioManager.CHARACTER_WALKING) {
+            AudioManager.CHARACTER_WALKING.pause(); 
+        }
 
-            if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
-                this.moveRight(); 
-                if (!this.isAboveGround()) {
-                    AudioManager.play(AudioManager.WALKING, 0.02);
-                }
+        if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
+            this.moveRight(); 
+            if (!this.isAboveGround()) {
+                AudioManager.play(AudioManager.CHARACTER_WALKING, 0.02);
             }
+        }
 
-            if (this.world.keyboard.LEFT && this.positionX > 0) {
-                this.moveLeft();
-                if (!this.isAboveGround()) {
-                    AudioManager.play(AudioManager.WALKING, 0.02);
-                }
-            } 
-
-            if(this.world.keyboard.SPACE && !this.isAboveGround()) {
-                this.jump();
-                AudioManager.play(AudioManager.JUMPING, 0.02);
+        if (this.world.keyboard.LEFT && this.positionX > 0) {
+            this.moveLeft();
+            if (!this.isAboveGround()) {
+                AudioManager.play(AudioManager.CHARACTER_WALKING, 0.02);
             }
+        } 
+
+        if(this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jump();
+            AudioManager.play(AudioManager.CHARACTER_JUMP, 0.02);
+        }
             
             let cameraPosition = -this.positionX + 100;
             if (cameraPosition > 0) {
@@ -155,7 +155,7 @@ class Character extends MoveableObject {
         setInterval(() => {
             if (this.isDead() && !this.isGameOver) {
                 this.isGameOver = true;
-                AudioManager.play(AudioManager.DEAD, 0.05);
+                AudioManager.play(AudioManager.CHARACTER_DEAD, 0.05);
                 console.log("Pepe is dead");
                 showGameOverScreen();
             }

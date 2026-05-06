@@ -93,3 +93,16 @@ function exitFullscreen() {
         document.webkitExitFullscreen();
     }
 }
+
+function toggleMuteBtn() {
+    AudioManager.toggleMute();
+    
+    let icon = document.getElementById('mute_icon');
+    if (AudioManager.isMuted) {
+        icon.src = 'img/sound-off.png'; 
+    } else {
+        icon.src = 'img/volume-up.png';
+    }
+
+    document.getElementById('mute_btn').blur(); 
+}
