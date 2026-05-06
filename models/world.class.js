@@ -104,6 +104,7 @@ class World {
     checkCollisionsWithBottles() {
         this.level.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle) && this.bottleBar.amount < 100) {
+                AudioManager.play(AudioManager.BOTTLE_COLLECT, 0.1);
                 this.level.bottles.splice(index, 1);
                 this.bottleBar.amount += 20;
                 this.bottleBar.setPercentage(this.bottleBar.amount);
