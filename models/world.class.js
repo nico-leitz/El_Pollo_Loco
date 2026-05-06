@@ -145,6 +145,7 @@ class World {
     checkCollisionsWithCoins() {
         this.level.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
+                AudioManager.play(AudioManager.COIN_COLLECT, 0.1);
                 this.level.coins.splice(index, 1);
                 this.coinBar.amount += 20;
                 if (this.coinBar.amount > 100) {
