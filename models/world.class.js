@@ -53,7 +53,7 @@ class World {
 
     checkCollisions() {
         this.level.enemies.forEach((enemy) => {
-            
+
             if (this.character.isColliding(enemy)) {
                 
                 if (this.character.speedY < 0 && this.character.isAboveGround()) {
@@ -135,7 +135,6 @@ class World {
         this.throwableObjects.forEach((bottle) => {
             this.level.enemies.forEach((enemy) => {
                 if (!bottle.afterBottleSplash && bottle.isColliding(enemy)) {
-                    console.log("Kollision erkannt mit:", enemy.constructor.name); 
                     bottle.throwBottleAnimation();
                     this.handleEndbossHit(enemy);
                 }
