@@ -5,10 +5,10 @@ class Chicken extends MoveableObject {
     isDead = false;
 
     offset = {
-        top: 5,
-        bottom: 5,
-        left: 5,
-        right: 5
+        top: 10,
+        bottom: 10,
+        left: 10,
+        right: 10
     };
 
     IMAGES_WALKING = [
@@ -21,14 +21,6 @@ class Chicken extends MoveableObject {
         'img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
     ];
 
-    
-    offset = {
-        top: 10,
-        bottom: 10,
-        left: 10,
-        right: 10
-    };
-
     speed = 0.5 + Math.random() * 0.5;
 
     constructor() {
@@ -37,6 +29,13 @@ class Chicken extends MoveableObject {
         this.loadImages(this.IMAGE_DEAD);
         this.positionX = 1000 + Math.random() * 2500;
         this.animate();
+    }
+
+    die() {
+        if (!this.isDead) {
+            this.isDead = true;
+            AudioManager.play(AudioManager.CHICKEN_DEAD, 0.05);
+        }
     }
 
     animate() {
