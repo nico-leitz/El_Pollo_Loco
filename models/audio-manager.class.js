@@ -20,4 +20,11 @@ class AudioManager {
         }
     }
 
+    static toggleMute() {
+        AudioManager.isMuted = !AudioManager.isMuted;
+        if (AudioManager.isMuted) {
+            AudioManager.allSounds.forEach(s => s.pause());
+        }
+    }
+
 }
