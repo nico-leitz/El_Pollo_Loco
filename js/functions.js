@@ -52,9 +52,17 @@ function showGameOverScreen() {
 
     resetAllIntervals();
     
-    world.character.walkAudio.pause();
-    world.character.damageAudio.pause();
-};
+    if (AudioManager.CHARACTER_WALKING) {
+        AudioManager.CHARACTER_WALKING.pause();
+    }
+    if (AudioManager.CHARACTER_DAMAGE) {
+        AudioManager.CHARACTER_DAMAGE.pause();
+    }
+    
+    if (AudioManager.CHARACTER_SNORING) {
+        AudioManager.CHARACTER_SNORING.pause();
+    }
+}
 
 function resetAllIntervals() {
     let goThroughAllIntervalIDs = setInterval(() => {}, 1000);
@@ -96,7 +104,7 @@ function exitFullscreen() {
 
 function toggleMuteBtn() {
     AudioManager.toggleMute();
-    
+
     let icon = document.getElementById('mute_icon');
     if (AudioManager.isMuted) {
         icon.src = 'img/sound-off.png'; 
