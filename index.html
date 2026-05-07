@@ -2,27 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="style.css">
     <title>El Pollo Loco</title>
 </head>
 <body>
 
   <div id="canvas_container" class="canvas-container"> 
+
     <button id="fullscreen_btn">Fullscreen</button>
-    <img id="start_screen" src="img/9_intro_outro_screens/start/startscreen_2.png" alt="start screen">
-    <img id="game_over_screen" class="d_none" src="img/You won, you lost/Game Over.png" alt="game over screen">
 
     <button id="mute_btn" onclick="toggleMuteBtn()">
         <img id="mute_icon" src="img/volume-up.png" alt="mute button">
     </button>
+
+    <img id="start_screen" src="img/9_intro_outro_screens/start/startscreen_2.png" alt="start screen">
     
     <div id="game_controls" class="game_controls">
         <button id="start_game_btn">Start Game!</button>
         <button id="controll_btn">Controll</button>
     </div>
 
+    <img id="game_over_screen" class="d_none" src="img/You won, you lost/Game Over.png" alt="game over screen">
     <button id="game_over_btn" class="d_none">Try Again!</button>
+
+    <img id="win_screen" class="d_none" src="img/You won, you lost/You Win A.png" alt="win screen">
+    <button id="win_btn" class="d_none win_restart_btn">Try Again!</button>
     
     <div id="controll_panel" class="controll d_none">
         <h2>Steuerung</h2>
@@ -62,6 +67,7 @@
     <script src="/models/cloud.class.js"></script>
     <script src="/models/background-object.class.js"></script>
     <script src="/models/status-bar.class.js"></script>
+    <script src="/models/endboss-health-bar.class.js"></script>
     <script src="/models/health-bar.class.js"></script>
     <script src="/models/coin-bar.class.js"></script>
     <script src="/models/bottle-bar.class.js"></script>

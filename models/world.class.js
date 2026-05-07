@@ -9,6 +9,7 @@ class World {
     healthBar;
     coinBar;
     bottleBar;
+    endbossHealthBar;
     throwableObjects = [];
 
     constructor(canvas, keyboard) {
@@ -18,6 +19,7 @@ class World {
         this.healthBar = new HealthBar();
         this.coinBar = new CoinBar();
         this.bottleBar = new BottleBar();
+        this.endbossHealthBar = new EndbossHealthBar();
         this.draw();
         this.setWorld();
         this.checkCollisions();
@@ -26,7 +28,7 @@ class World {
 
     setWorld() {
         this.character.world = this;
-        this.endboss = this.level.enemies.find(e => e instanceof Endboss);
+        this.endboss = this.level.enemies.find(endboss => endboss instanceof Endboss);
         
         if (this.endboss) {
             this.endboss.world = this;
@@ -175,10 +177,30 @@ class World {
     handleEndbossHit(enemy) {
         if (enemy instanceof Endboss) {
             enemy.hit(20);
-            console.log('Boss Energie:', enemy.energy);
+            this.endbossHealthBar.setPercentage(enemy.energy);
+            
+            if (enemy.isDead()) {
+                this.showWinScreen();
+            }
         } else if (!enemy.isDead) {
             this.killEnemy(enemy);
         }
+    }
+
+    showWinScreen() {
+        setTimeout(() => {
+            document.getElementById('win_screen').classList.remove('d_none');
+        }, 1000); 
+    }
+
+    checkBossHit() {
+        this.throwableObjects.forEach((bottle) => {
+            if (this.endboss.isColliding(bottle)) {
+                this.endboss.hit(20);
+                this.endbossHealthBar.setPercentage(this.endboss.energy);
+                console.log('Boss health:', this.endboss.energy);
+            }
+        });
     }
 
     draw() {
@@ -197,6 +219,11 @@ class World {
         this.addToMap(this.healthBar);
         this.addToMap(this.coinBar);
         this.addToMap(this.bottleBar);
+
+        if (this.endbossHealthBar) {
+            this.addToMap(this.endbossHealthBar);
+        }
+        
         this.ctx.translate(Math.round(this.camera_x), 0);
 
         this.addToMap(this.character);

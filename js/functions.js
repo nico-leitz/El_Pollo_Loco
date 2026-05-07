@@ -150,3 +150,8 @@ function bindTouchEvents() {
     }, 500);
 }
 
+document.getElementById('win_btn').addEventListener('click', () => {
+    document.getElementById('win_screen').classList.add('d_none');
+    location.reload(); 
+});
+ 
