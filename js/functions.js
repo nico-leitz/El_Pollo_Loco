@@ -10,6 +10,7 @@ const gameControlsRef = document.getElementById('game_controls');
 const controllBtnRef = document.getElementById('controll_btn');
 const controllPanelRef = document.getElementById('controll_panel');
 const closeControllBtnRef = document.getElementById('close_controll_btn');
+const mobileControlsRef = document.getElementById('mobile_controls');
 
 
 startBtnRef.addEventListener('click', () => {
@@ -19,6 +20,11 @@ startBtnRef.addEventListener('click', () => {
     
     gameOverScreenRef.classList.add('d_none');
     gameOverBtnRef.classList.add('d_none');
+
+    if (window.matchMedia("(hover: none)").matches) {
+        mobileControlsRef.classList.remove('d_none');
+        enterFullscreen(fullscreenRef);
+    }
     
     init(); 
 });

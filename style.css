@@ -181,6 +181,7 @@ canvas {
     border-radius: 50%;
     padding: 8px;
     cursor: pointer;
+    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -253,9 +254,13 @@ canvas {
     background-color: rgba(255, 153, 0, 0.8);
 }
 
+
 @media (hover: none) and (pointer: coarse) {
-    #mobile_controls {
+    #mobile_controls:not(.d_none) {
         display: flex;
+    }
+    #fullscreen_btn {
+        display: none; 
     }
 }
 
@@ -264,6 +269,6 @@ canvas {
         display: flex;
     }
     #mobile_controls {
-        display: none; 
+        display: none !important;
     }
 }

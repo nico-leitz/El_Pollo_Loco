@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>El Pollo Loco</title>
 </head>
@@ -35,8 +35,8 @@
     <div id="orientation_overlay">
         <span>Please rotate device 🔄</span>
     </div>
-
-    <div id="mobile_controls">
+>
+    <div id="mobile_controls" class="d_none">
         <div class="control-btn-group left-group">
             <button id="btn_left">◀</button>
             <button id="btn_right">▶</button>
@@ -50,6 +50,7 @@
     <canvas id="canvas" width="720" height="480"></canvas>
   </div>
 
+    <script src="/js/functions.js"></script>
     <script src="models/audio-manager.class.js"></script>
     <script src="models/audio-error.class.js"></script>
     <script src="/models/drawable-object.class.js"></script>
@@ -74,6 +75,5 @@
     <script src="/models/throwable-object.class.js"></script>
     <script src="/levels/level1.js"></script>
     <script src="/js/game.js"></script>
-    <script src="/js/functions.js"></script>
 </body>
 </html>
