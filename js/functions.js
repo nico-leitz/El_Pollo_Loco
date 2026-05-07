@@ -3,7 +3,7 @@ const startScreenRef = document.getElementById('start_screen');
 const gameOverScreenRef = document.getElementById('game_over_screen');
 const startBtnRef = document.getElementById('start_game_btn');
 const gameOverBtnRef = document.getElementById('game_over_btn');
-const fullscreenRef =  document.getElementById("canvas_container");
+const fullscreenRef = document.getElementById("canvas_container");
 const fullscreenBtnRef = document.getElementById('fullscreen_btn');
 
 const gameControlsRef = document.getElementById('game_controls');
@@ -74,6 +74,7 @@ function resetAllIntervals() {
 
 fullscreenBtnRef.addEventListener('click', () => {
     toggleFullscreen(fullscreenRef);
+    fullscreenBtnRef.blur();
 });
 
 function toggleFullscreen(element) {
@@ -114,3 +115,33 @@ function toggleMuteBtn() {
 
     document.getElementById('mute_btn').blur(); 
 }
+
+function bindTouchEvents() {
+
+    setTimeout(() => {
+        if (typeof keyboard === 'undefined') return;
+
+        const btnMap = [
+            { id: 'btn_left', key: 'LEFT' },
+            { id: 'btn_right', key: 'RIGHT' },
+            { id: 'btn_jump', key: 'SPACE' },
+            { id: 'btn_throw', key: 'D' }
+        ];
+
+        btnMap.forEach(btn => {
+            const element = document.getElementById(btn.id);
+            
+            element.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                keyboard[btn.key] = true;
+            });
+
+            element.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                keyboard[btn.key] = false;
+            });
+        });
+    }, 500);
+}
+
+bindTouchEvents();

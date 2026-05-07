@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="style.css">
     <title>El Pollo Loco</title>
 </head>
@@ -31,14 +31,25 @@
         <p><b>D</b> - Flasche werfen</p>
         <button id="close_controll_btn">Schließen</button>
     </div>
-    
-        <canvas id="canvas" width="720" height="480">
-            
-        </canvas>
+
+    <div id="orientation_overlay">
+        <span>Please rotate device 🔄</span>
     </div>
 
+    <div id="mobile_controls">
+        <div class="control-btn-group left-group">
+            <button id="btn_left">◀</button>
+            <button id="btn_right">▶</button>
+        </div>
+        <div class="control-btn-group right-group">
+            <button id="btn_jump">▲</button>
+            <button id="btn_throw">🍾</button>
+        </div>
+    </div>
+    
+    <canvas id="canvas" width="720" height="480"></canvas>
+  </div>
 
-    <script src="/js/functions.js"></script>
     <script src="models/audio-manager.class.js"></script>
     <script src="models/audio-error.class.js"></script>
     <script src="/models/drawable-object.class.js"></script>
@@ -63,5 +74,6 @@
     <script src="/models/throwable-object.class.js"></script>
     <script src="/levels/level1.js"></script>
     <script src="/js/game.js"></script>
+    <script src="/js/functions.js"></script>
 </body>
 </html>
