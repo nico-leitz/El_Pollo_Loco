@@ -3,6 +3,8 @@ class Chicken extends MoveableObject {
     height = 60;
     width = 60;
     isDead = false;
+    deathSound = AudioManager.CHICKEN_DEAD;
+   
 
     offset = {
         top: 10,
@@ -34,7 +36,7 @@ class Chicken extends MoveableObject {
     die() {
         if (!this.isDead) {
             this.isDead = true;
-            AudioManager.play(AudioManager.CHICKEN_DEAD, 0.05);
+            AudioManager.play(this.deathSound, 0.2);
         }
     }
 

@@ -150,4 +150,3 @@ function bindTouchEvents() {
     }, 500);
 }
 
-bindTouchEvents();

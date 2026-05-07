@@ -147,17 +147,21 @@ class World {
     };
 
     killEnemy(enemy) {
-        if (!enemy.isDead) {
-            enemy.isDead = true;
-            
-            setTimeout(() => {
-                let index = this.level.enemies.indexOf(enemy);
-                if (index > -1) {
-                    this.level.enemies.splice(index, 1);
-                }
-            }, 1000);
+    if (!enemy.isDead) {
+        if (typeof enemy.die === 'function') {
+            enemy.die();
+        } else {
+            enemy.isDead = true; 
         }
+        
+        setTimeout(() => {
+            let index = this.level.enemies.indexOf(enemy);
+            if (index > -1) {
+                this.level.enemies.splice(index, 1);
+            }
+        }, 1000);
     }
+}
 
     handleEnemyHit(enemy) {
         if (enemy instanceof Endboss) {
