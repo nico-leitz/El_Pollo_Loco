@@ -266,7 +266,7 @@ class World {
             moveableObject.height
         );
 
-        this.drawDebugFrames(moveableObject);
+      //  this.drawDebugFrames(moveableObject);
 
         if (moveableObject.otherDirection) {
             this.flipImageBack(moveableObject);

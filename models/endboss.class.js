@@ -4,10 +4,12 @@ class Endboss extends MoveableObject {
     width = 280;
     currentImage = 0;
     energy = 100;
-    speed = 1.5;
+    speed = 1.0;
+    attackSpeed = 5.0;
     startX = 3000;
     isInDeadAnimation = false;
     damage = 20;
+    hadFirstContact = false;
 
     offset = {
         top: 60,
@@ -66,6 +68,25 @@ class Endboss extends MoveableObject {
     }
 
     moveEndboss() {
+        if (this.world && this.world.character) {
+            let characterX = this.world.character.positionX;
+            let distanceToCharacter = Math.abs(this.positionX - characterX);
+            let maxLeftRange = this.startX - 300; 
+
+            if (distanceToCharacter < 400 && characterX >= maxLeftRange) {
+                this.hadFirstContact = true;
+            }
+
+            if (this.hadFirstContact) {
+                if (characterX < maxLeftRange) {
+                    this.hadFirstContact = false; 
+                } else {
+                    this.attackCharacter(characterX);
+                    return; 
+                }
+            }
+        }
+
         if (this.otherDirection) {
             this.positionX += this.speed;
         } else {
@@ -75,6 +96,17 @@ class Endboss extends MoveableObject {
         if (this.positionX > this.startX + 300) {
             this.otherDirection = false;
         } else if (this.positionX < this.startX - 300) {
+            this.otherDirection = true;
+        }
+    }
+
+    attackCharacter(characterX) {
+        if (this.positionX > characterX) {
+            this.positionX -= this.attackSpeed;
+            this.otherDirection = false;
+        } 
+        else if (this.positionX < characterX) {
+            this.positionX += this.attackSpeed;
             this.otherDirection = true;
         }
     }
@@ -99,6 +131,8 @@ class Endboss extends MoveableObject {
 
     hit(damage) {
         this.energy -= damage;
+        this.hadFirstContact = true; 
+        
         if (this.energy < 0) {
             this.energy = 0;
         } else {
