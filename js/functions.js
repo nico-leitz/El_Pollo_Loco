@@ -13,7 +13,7 @@ const mobileControlsRef = document.getElementById('mobile_controls');
 
 const gameOverMenuRef = document.getElementById('game_over_menu');
 const winScreenRef = document.getElementById('win_screen');
-const winMenuRef = document.getElementById('win_menu'); // Global definiert!
+const winMenuRef = document.getElementById('win_menu');
 
 if (startBtnRef) {
     startBtnRef.addEventListener('click', () => {
@@ -90,7 +90,7 @@ function showWinScreen() {
     if (mobileControlsRef) mobileControlsRef.classList.add('d_none');
 
     if (winScreenRef) winScreenRef.classList.remove('d_none');
-    if (winMenuRef) winMenuRef.classList.remove('d_none'); // Zeigt die Buttons jetzt garantiert an!
+    if (winMenuRef) winMenuRef.classList.remove('d_none');
 
     resetAllIntervals();
 

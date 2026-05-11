@@ -33,12 +33,35 @@
         <button id="win_home_btn" class="menu_btn">Back to Menu</button>
     </div>
     
-    <div id="controll_panel" class="controll d_none">
-        <h2>Controls</h2>
-        <p><b>W, A, S, D</b> or <b>Arrow Keys</b> - Move</p>
-        <p><b>SPACE</b> - Jump</p>
-        <p><b>D</b> - Throw Bottle</p>
-        <button id="close_controll_btn">Close</button>
+    <div id="controll_panel" class="panel-backdrop d_none">
+        <div class="control-panel">
+            <h2>Controls</h2>
+            
+            <div class="control-row">
+                <span class="control-desc">Move</span>
+                <div class="keys">
+                    <kbd>A</kbd>
+                    <span class="separator">/</span>
+                    <kbd>D</kbd>
+                </div>
+            </div>
+
+            <div class="control-row">
+                <span class="control-desc">Jump</span>
+                <div class="keys">
+                    <kbd class="space-key">SPACE</kbd>
+                </div>
+            </div>
+
+            <div class="control-row">
+                <span class="control-desc">Throw Bottle</span>
+                <div class="keys">
+                    <kbd>D</kbd>
+                </div>
+            </div>
+
+            <button id="close_controll_btn">Got it!</button>
+        </div>
     </div>
 
     <div id="orientation_overlay">
