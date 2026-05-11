@@ -59,9 +59,6 @@ function initLevel() {
             new CoinObjects(),
             new CoinObjects(),
             new CoinObjects(),
-            new CoinObjects(),
-            new CoinObjects(),
-            new CoinObjects(),
         ],
         [
             new BottleObjects(),
