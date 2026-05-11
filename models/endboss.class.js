@@ -6,10 +6,11 @@ class Endboss extends MoveableObject {
     energy = 100;
     speed = 1.0;
     attackSpeed = 5.0;
-    startX = 3000;
+    startX = 3500;
     isInDeadAnimation = false;
     damage = 20;
     hadFirstContact = false;
+    counterAttackActive = false;
 
     offset = {
         top: 60,
@@ -44,7 +45,7 @@ class Endboss extends MoveableObject {
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
 
-        this.positionX = 3000; 
+        this.positionX = 3500; 
         this.applyGravity();
         this.animate();
     }
@@ -71,9 +72,18 @@ class Endboss extends MoveableObject {
         if (this.world && this.world.character) {
             let characterX = this.world.character.positionX;
             let distanceToCharacter = Math.abs(this.positionX - characterX);
-            let maxLeftRange = this.startX - 300; 
+            let maxLeftRange = this.startX - 700;
 
-            if (distanceToCharacter < 400 && characterX >= maxLeftRange) {
+            if (this.counterAttackActive) {
+                if (distanceToCharacter < 80) {
+                    this.counterAttackActive = false; 
+                } else {
+                    this.attackCharacter(characterX);
+                    return;
+                }
+            }
+
+            if (distanceToCharacter < 800 && characterX >= maxLeftRange) {
                 this.hadFirstContact = true;
             }
 
@@ -131,7 +141,7 @@ class Endboss extends MoveableObject {
 
     hit(damage) {
         this.energy -= damage;
-        this.hadFirstContact = true; 
+        this.counterAttackActive = true;
         
         if (this.energy < 0) {
             this.energy = 0;
