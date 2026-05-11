@@ -64,7 +64,7 @@ canvas {
     z-index: 20;
 }
 
-.game_controls button, #game_over_btn, #close_controll_btn {
+.game_controls button, #close_controll_btn {
     padding: 12px 24px;
     font-size: 20px;
     font-family: 'Arial Black', sans-serif;
@@ -78,24 +78,14 @@ canvas {
     box-shadow: 0 4px 0 #5d4037;
 }
 
-.game_controls button:hover, #game_over_btn:hover {
+.game_controls button:hover {
     background-color: #ffb84d;
     filter: brightness(1.1);
 }
 
-.game_controls button:active, #game_over_btn:active {
+.game_controls button:active {
     box-shadow: none;
     transform: translateY(4px);
-}
-
-#game_over_btn {
-    position: absolute;
-    bottom: 50px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    width: fit-content;
-    z-index: 25;
 }
 
 #fullscreen_btn {
@@ -122,12 +112,10 @@ canvas {
     color: white;
     border: 5px solid #ff9900;
     border-radius: 20px;
-
     display: flex; 
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    
     z-index: 1000; 
     padding: 20px;
     text-align: center;
@@ -263,28 +251,54 @@ canvas {
     z-index: 5;
 }
 
-.win_restart_btn {
+#win_menu, #game_over_menu {
     position: absolute;
     bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 20;
-    padding: 12px 24px;
-    font-size: 24px;
-    cursor: pointer;
-    background-color: #ffc107; 
-    color: black;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
+    display: flex;
+    gap: 15px; 
+    align-items: center;
+    z-index: 999;
 }
 
-#win_btn {
-    position: absolute;
-    z-index: 10; 
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
+#win_menu.d_none, #game_over_menu.d_none {
+    display: none;
+}
+
+#win_menu .menu_btn, #game_over_menu .menu_btn {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    width: 140px; 
+    min-height: 45px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6px 12px; 
+    font-size: 14px; 
+    font-family: 'Arial Black', sans-serif;
+    text-transform: uppercase;
+    background-color: #ff9900;
+    color: white;
+    border: 2px solid #5d4037; 
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 100ms ease-in-out;
+    box-shadow: 0 4px 0 #5d4037;
+    box-sizing: border-box; 
+}
+
+#win_menu .menu_btn:hover, #game_over_menu .menu_btn:hover {
+    background-color: #ffb84d;
+    filter: brightness(1.1);
+}
+
+#win_menu .menu_btn:active, #game_over_menu .menu_btn:active {
+    box-shadow: none;
+    transform: translateY(4px);
 }
 
 .game_footer {

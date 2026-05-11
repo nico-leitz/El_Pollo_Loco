@@ -13,6 +13,7 @@ const mobileControlsRef = document.getElementById('mobile_controls');
 
 const gameOverMenuRef = document.getElementById('game_over_menu');
 const winScreenRef = document.getElementById('win_screen');
+const winMenuRef = document.getElementById('win_menu'); // Global definiert!
 
 if (startBtnRef) {
     startBtnRef.addEventListener('click', () => {
@@ -77,6 +78,22 @@ function showGameOverScreen() {
 
     resetAllIntervals();
     
+    if (typeof AudioManager !== 'undefined') {
+        if (AudioManager.CHARACTER_WALKING) AudioManager.CHARACTER_WALKING.pause();
+        if (AudioManager.CHARACTER_DAMAGE) AudioManager.CHARACTER_DAMAGE.pause();
+        if (AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
+    }
+}
+
+function showWinScreen() {
+    if (canvasRef) canvasRef.classList.add('d_none');
+    if (mobileControlsRef) mobileControlsRef.classList.add('d_none');
+
+    if (winScreenRef) winScreenRef.classList.remove('d_none');
+    if (winMenuRef) winMenuRef.classList.remove('d_none'); // Zeigt die Buttons jetzt garantiert an!
+
+    resetAllIntervals();
+
     if (typeof AudioManager !== 'undefined') {
         if (AudioManager.CHARACTER_WALKING) AudioManager.CHARACTER_WALKING.pause();
         if (AudioManager.CHARACTER_DAMAGE) AudioManager.CHARACTER_DAMAGE.pause();
@@ -173,23 +190,23 @@ function bindTouchEvents() {
     }, 500);
 }
 
-const winRestartBtn = document.getElementById('win_restart_btn');
-if (winRestartBtn) {
-    winRestartBtn.addEventListener('click', () => {
-        if (winScreenRef) winScreenRef.classList.add('d_none');
-        const winMenu = document.getElementById('win_menu');
-        if (winMenu) winMenu.classList.add('d_none');
-        
-        resetAllIntervals();
-        if (typeof init === 'function') {
-            init(); 
-        }
-    });
-}
+    const winRestartBtn = document.getElementById('win_restart_btn');
+    if (winRestartBtn) {
+        winRestartBtn.addEventListener('click', () => {
+            if (winScreenRef) winScreenRef.classList.add('d_none');
+            if (winMenuRef) winMenuRef.classList.add('d_none');
+            if (canvasRef) canvasRef.classList.remove('d_none');
+            
+            resetAllIntervals();
+            if (typeof init === 'function') {
+                init(); 
+            }
+        });
+    }
 
-const winHomeBtn = document.getElementById('win_home_btn');
-if (winHomeBtn) {
-    winHomeBtn.addEventListener('click', () => {
-        location.reload();
-    });
+    const winHomeBtn = document.getElementById('win_home_btn');
+    if (winHomeBtn) {
+        winHomeBtn.addEventListener('click', () => {
+            location.reload();
+        });
 }

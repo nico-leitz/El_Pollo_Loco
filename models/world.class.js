@@ -188,10 +188,17 @@ class World {
     }
 
     showWinScreen() {
-        setTimeout(() => {
-            document.getElementById('win_screen').classList.remove('d_none');
-        }, 1000); 
-    }
+    setTimeout(() => {
+        if (typeof showWinScreen === 'function') {
+            showWinScreen();
+        } else {
+            const winScreen = document.getElementById('win_screen');
+            const winMenu = document.getElementById('win_menu');
+            if (winScreen) winScreen.classList.remove('d_none');
+            if (winMenu) winMenu.classList.remove('d_none');
+        }
+    }, 1000); 
+}
 
     checkBossHit() {
         this.throwableObjects.forEach((bottle) => {
