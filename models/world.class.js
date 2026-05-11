@@ -211,7 +211,7 @@ class World {
     }
 
     draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.translate(Math.round(this.camera_x), 0);
         this.addObjectsToMap(this.level.layers);
@@ -227,15 +227,11 @@ class World {
         this.addToMap(this.coinBar);
         this.addToMap(this.bottleBar);
 
-        if (this.endbossHealthBar) {
-            this.addToMap(this.endbossHealthBar);
-        }
+        this.drawEndbossHealthBar();
         
         this.ctx.translate(Math.round(this.camera_x), 0);
 
         this.addToMap(this.character);
-        
-        
 
         this.ctx.translate(-Math.round(this.camera_x), 0);
           
@@ -299,4 +295,18 @@ class World {
             this.ctx.stroke();
         }
     }
+
+    drawEndbossHealthBar() {
+        let endboss = this.level.enemies.find(enemy => enemy instanceof Endboss);
+        if (endboss) {
+            let screenRightEdge = -this.camera_x + this.canvas.width;
+            
+            if (endboss.positionX < screenRightEdge && endboss.energy > 0) {
+                if (this.endbossHealthBar) {
+                    this.endbossHealthBar.setPercentage(endboss.energy);
+                    this.addToMap(this.endbossHealthBar);
+                }
+            }
+        }
     }
+}
