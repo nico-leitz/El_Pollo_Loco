@@ -4,6 +4,7 @@ class Character extends MoveableObject {
     height = 280;
     width = 140;
     isGameOver = false;
+    currentJumpImage = 0;
 
     offset = {
         top: 120,
@@ -77,58 +78,70 @@ class Character extends MoveableObject {
     }
 
     animate() {
-    setInterval(() => {
-        if (this.isDead()) {
-            this.playAnimation(this.IMAGES_DEAD);
-        } 
-        else if (this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
-            AudioManager.play(AudioManager.CHARACTER_DAMAGE, 0.02);
-        } 
-        else if (this.isAboveGround()) {
-            this.playAnimation(this.IMAGES_JUMPING);  
-        } 
-        else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-            this.playAnimation(this.IMAGES_WALKING);
-            this.lastAction = new Date().getTime();
-            if(AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
-        } 
-        else if (this.isLongIdle()) {
-            this.playAnimation(this.IMAGES_LONG_IDLE);
-            AudioManager.play(AudioManager.CHARACTER_SNORING, 0.02);
-        } 
-        else {
-            this.playAnimation(this.IMAGES_IDLE);
-            if(AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
+        setInterval(() => {
+            if (this.isDead()) {
+                this.playAnimation(this.IMAGES_DEAD);
+            } 
+            else if (this.isHurt()) {
+                this.playAnimation(this.IMAGES_HURT);
+                AudioManager.play(AudioManager.CHARACTER_DAMAGE, 0.02);
+            } 
+            else if (this.isAboveGround()) {
+                this.playJumpAnimation();  
+            } 
+            else {
+                this.currentJumpImage = 0;
+
+                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                    this.playAnimation(this.IMAGES_WALKING);
+                    this.lastAction = new Date().getTime();
+                    if(AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
+                } 
+                else if (this.isLongIdle()) {
+                    this.playAnimation(this.IMAGES_LONG_IDLE);
+                    AudioManager.play(AudioManager.CHARACTER_SNORING, 0.02);
+                } 
+                else {
+                    this.playAnimation(this.IMAGES_IDLE);
+                    if(AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
+                }
+            }
+        }, 100);
+    }
+
+    playJumpAnimation() {
+        if (this.currentJumpImage < this.IMAGES_JUMPING.length) {
+            let path = this.IMAGES_JUMPING[this.currentJumpImage];
+            this.img = this.imgCache[path];
+            this.currentJumpImage++;
         }
-    }, 100);
-}
+    }
 
     move() {
         setInterval(() => {
-        if (AudioManager.CHARACTER_WALKING) {
-            AudioManager.CHARACTER_WALKING.pause(); 
-        }
-
-        if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
-            this.moveRight(); 
-            if (!this.isAboveGround()) {
-                AudioManager.play(AudioManager.CHARACTER_WALKING, 0.02);
+            if (AudioManager.CHARACTER_WALKING) {
+                AudioManager.CHARACTER_WALKING.pause(); 
             }
-        }
 
-        if (this.world.keyboard.LEFT && this.positionX > 0) {
-            this.moveLeft();
-            if (!this.isAboveGround()) {
-                AudioManager.play(AudioManager.CHARACTER_WALKING, 0.02);
+            if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
+                this.moveRight(); 
+                if (!this.isAboveGround()) {
+                    AudioManager.play(AudioManager.CHARACTER_WALKING, 0.02);
+                }
             }
-        } 
 
-        if(this.world.keyboard.SPACE && !this.isAboveGround()) {
-            this.jump();
-            AudioManager.play(AudioManager.CHARACTER_JUMP, 0.02);
-        }
-            
+            if (this.world.keyboard.LEFT && this.positionX > 0) {
+                this.moveLeft();
+                if (!this.isAboveGround()) {
+                    AudioManager.play(AudioManager.CHARACTER_WALKING, 0.02);
+                }
+            } 
+
+            if(this.world.keyboard.SPACE && !this.isAboveGround()) {
+                this.jump();
+                AudioManager.play(AudioManager.CHARACTER_JUMP, 0.02);
+            }
+                
             let cameraPosition = -this.positionX + 100;
             if (cameraPosition > 0) {
                 cameraPosition = 0;
@@ -149,6 +162,7 @@ class Character extends MoveableObject {
 
     jump() {
         this.speedY = 15;
+        this.currentJumpImage = 0;
     }
 
     checkGameOver() {
