@@ -20,21 +20,27 @@
     
     <div id="game_controls" class="game_controls">
         <button id="start_game_btn">Start Game!</button>
-        <button id="controll_btn">Controll</button>
+        <button id="controll_btn">Controls</button>
     </div>
 
     <img id="game_over_screen" class="d_none" src="img/You won, you lost/Game Over.png" alt="game over screen">
-    <button id="game_over_btn" class="d_none">Try Again!</button>
+    <div id="game_over_menu" class="d_none end_screen_menu">
+        <button id="game_over_restart_btn" class="menu_btn">Try Again!</button>
+        <button id="game_over_home_btn" class="menu_btn">Back to Menu</button>
+    </div>
 
     <img id="win_screen" class="d_none" src="img/You won, you lost/You Win A.png" alt="win screen">
-    <button id="win_btn" class="d_none win_restart_btn">Try Again!</button>
+    <div id="win_menu" class="d_none end_screen_menu">
+        <button id="win_restart_btn" class="menu_btn">Try Again!</button>
+        <button id="win_home_btn" class="menu_btn">Back to Menu</button>
+    </div>
     
     <div id="controll_panel" class="controll d_none">
-        <h2>Steuerung</h2>
-        <p><b>W, A, S, D</b> oder <b>Pfeiltasten</b> - Bewegen</p>
-        <p><b>SPACE</b> - Springen</p>
-        <p><b>D</b> - Flasche werfen</p>
-        <button id="close_controll_btn">Schließen</button>
+        <h2>Controls</h2>
+        <p><b>W, A, S, D</b> or <b>Arrow Keys</b> - Move</p>
+        <p><b>SPACE</b> - Jump</p>
+        <p><b>D</b> - Throw Bottle</p>
+        <button id="close_controll_btn">Close</button>
     </div>
 
     <div id="orientation_overlay">
@@ -53,6 +59,12 @@
     </div>
     
     <canvas id="canvas" width="720" height="480"></canvas>
+  </div>
+
+  <div class="game_footer">
+      <a href="imprint.html">Imprint</a>
+      <span class="separator">|</span> 
+      <a href="privacy.html">Privacy Policy</a>
   </div>
 
     <script src="/js/functions.js"></script>

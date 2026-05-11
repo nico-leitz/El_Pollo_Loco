@@ -2,7 +2,6 @@ const canvasRef = document.getElementById('canvas');
 const startScreenRef = document.getElementById('start_screen');
 const gameOverScreenRef = document.getElementById('game_over_screen');
 const startBtnRef = document.getElementById('start_game_btn');
-const gameOverBtnRef = document.getElementById('game_over_btn');
 const fullscreenRef = document.getElementById("canvas_container");
 const fullscreenBtnRef = document.getElementById('fullscreen_btn');
 
@@ -12,78 +11,95 @@ const controllPanelRef = document.getElementById('controll_panel');
 const closeControllBtnRef = document.getElementById('close_controll_btn');
 const mobileControlsRef = document.getElementById('mobile_controls');
 
+const gameOverMenuRef = document.getElementById('game_over_menu');
+const winScreenRef = document.getElementById('win_screen');
 
-startBtnRef.addEventListener('click', () => {
-    startScreenRef.classList.add('d_none');
-    gameControlsRef.classList.add('d_none'); 
-    controllPanelRef.classList.add('d_none'); 
-    
-    gameOverScreenRef.classList.add('d_none');
-    gameOverBtnRef.classList.add('d_none');
+if (startBtnRef) {
+    startBtnRef.addEventListener('click', () => {
+        if (startScreenRef) startScreenRef.classList.add('d_none');
+        if (gameControlsRef) gameControlsRef.classList.add('d_none'); 
+        if (controllPanelRef) controllPanelRef.classList.add('d_none'); 
+        
+        if (gameOverScreenRef) gameOverScreenRef.classList.add('d_none');
+        if (gameOverMenuRef) gameOverMenuRef.classList.add('d_none');
 
-    if (window.matchMedia("(hover: none)").matches) {
-        mobileControlsRef.classList.remove('d_none');
-        enterFullscreen(fullscreenRef);
-    }
-    
-    init(); 
-});
+        if (window.matchMedia("(hover: none)").matches) {
+            if (mobileControlsRef) mobileControlsRef.classList.remove('d_none');
+            enterFullscreen(fullscreenRef);
+        }
+        
+        if (typeof init === 'function') {
+            init(); 
+        }
+    });
+}
 
+const gameOverRestartBtn = document.getElementById('game_over_restart_btn');
+if (gameOverRestartBtn) {
+    gameOverRestartBtn.addEventListener('click', () => {
+        if (gameOverScreenRef) gameOverScreenRef.classList.add('d_none');
+        if (gameOverMenuRef) gameOverMenuRef.classList.add('d_none');
+        
+        if (startScreenRef) startScreenRef.classList.add('d_none');
+        if (canvasRef) canvasRef.classList.remove('d_none');
+        
+        resetAllIntervals();
+        if (typeof init === 'function') {
+            init(); 
+        }
+    });
+}
 
-gameOverBtnRef.addEventListener('click', () => {
-    gameOverScreenRef.classList.add('d_none');
-    gameOverBtnRef.classList.add('d_none');
-    
-    startScreenRef.classList.remove('d_none');
-    gameControlsRef.classList.remove('d_none'); 
+const gameOverHomeBtn = document.getElementById('game_over_home_btn');
+if (gameOverHomeBtn) {
+    gameOverHomeBtn.addEventListener('click', () => {
+        location.reload();
+    });
+}
 
-    canvasRef.classList.remove('d_none');
-});
+if (controllBtnRef) {
+    controllBtnRef.addEventListener('click', () => {
+        if (controllPanelRef) controllPanelRef.classList.remove('d_none');
+    });
+}
 
-
-controllBtnRef.addEventListener('click', () => {
-    controllPanelRef.classList.remove('d_none');
-});
-
-
-closeControllBtnRef.addEventListener('click', () => {
-    controllPanelRef.classList.add('d_none');
-});
+if (closeControllBtnRef) {
+    closeControllBtnRef.addEventListener('click', () => {
+        if (controllPanelRef) controllPanelRef.classList.add('d_none');
+    });
+}
 
 function showGameOverScreen() {
-    canvasRef.classList.add('d_none');
+    if (canvasRef) canvasRef.classList.add('d_none');
     
-    gameOverScreenRef.classList.remove('d_none');
-    gameOverBtnRef.classList.remove('d_none');
+    if (gameOverScreenRef) gameOverScreenRef.classList.remove('d_none');
+    if (gameOverMenuRef) gameOverMenuRef.classList.remove('d_none');
 
     resetAllIntervals();
     
-    if (AudioManager.CHARACTER_WALKING) {
-        AudioManager.CHARACTER_WALKING.pause();
-    }
-    if (AudioManager.CHARACTER_DAMAGE) {
-        AudioManager.CHARACTER_DAMAGE.pause();
-    }
-    
-    if (AudioManager.CHARACTER_SNORING) {
-        AudioManager.CHARACTER_SNORING.pause();
+    if (typeof AudioManager !== 'undefined') {
+        if (AudioManager.CHARACTER_WALKING) AudioManager.CHARACTER_WALKING.pause();
+        if (AudioManager.CHARACTER_DAMAGE) AudioManager.CHARACTER_DAMAGE.pause();
+        if (AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
     }
 }
 
 function resetAllIntervals() {
     let goThroughAllIntervalIDs = setInterval(() => {}, 1000);
-    
     for (let i = 0; i <= goThroughAllIntervalIDs; i++) {
         window.clearInterval(i);
     }
 }
 
-fullscreenBtnRef.addEventListener('click', () => {
-    toggleFullscreen(fullscreenRef);
-    fullscreenBtnRef.blur();
-});
+if (fullscreenBtnRef) {
+    fullscreenBtnRef.addEventListener('click', () => {
+        toggleFullscreen(fullscreenRef);
+        fullscreenBtnRef.blur();
+    });
+}
 
 function toggleFullscreen(element) {
+    if (!element) return;
     if (!document.fullscreenElement) {
         enterFullscreen(element);
     } else {
@@ -92,6 +108,7 @@ function toggleFullscreen(element) {
 }
 
 function enterFullscreen(element) {
+    if (!element) return;
     if (element.requestFullscreen) {
         element.requestFullscreen();
     } else if (element.webkitRequestFullscreen) { 
@@ -110,20 +127,25 @@ function exitFullscreen() {
 }
 
 function toggleMuteBtn() {
-    AudioManager.toggleMute();
-
-    let icon = document.getElementById('mute_icon');
-    if (AudioManager.isMuted) {
-        icon.src = 'img/sound-off.png'; 
-    } else {
-        icon.src = 'img/volume-up.png';
+    if (typeof AudioManager !== 'undefined') {
+        AudioManager.toggleMute();
+        let icon = document.getElementById('mute_icon');
+        if (icon) {
+            if (AudioManager.isMuted) {
+                icon.src = 'img/sound-off.png'; 
+            } else {
+                icon.src = 'img/volume-up.png';
+            }
+        }
     }
 
-    document.getElementById('mute_btn').blur(); 
+    let muteBtn = document.getElementById('mute_btn');
+    if (muteBtn) {
+        muteBtn.blur(); 
+    }
 }
 
 function bindTouchEvents() {
-
     setTimeout(() => {
         if (typeof keyboard === 'undefined') return;
 
@@ -136,22 +158,38 @@ function bindTouchEvents() {
 
         btnMap.forEach(btn => {
             const element = document.getElementById(btn.id);
-            
-            element.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                keyboard[btn.key] = true;
-            });
+            if (element) {
+                element.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    keyboard[btn.key] = true;
+                });
 
-            element.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                keyboard[btn.key] = false;
-            });
+                element.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    keyboard[btn.key] = false;
+                });
+            }
         });
     }, 500);
 }
 
-document.getElementById('win_btn').addEventListener('click', () => {
-    document.getElementById('win_screen').classList.add('d_none');
-    location.reload(); 
-});
- 
+const winRestartBtn = document.getElementById('win_restart_btn');
+if (winRestartBtn) {
+    winRestartBtn.addEventListener('click', () => {
+        if (winScreenRef) winScreenRef.classList.add('d_none');
+        const winMenu = document.getElementById('win_menu');
+        if (winMenu) winMenu.classList.add('d_none');
+        
+        resetAllIntervals();
+        if (typeof init === 'function') {
+            init(); 
+        }
+    });
+}
+
+const winHomeBtn = document.getElementById('win_home_btn');
+if (winHomeBtn) {
+    winHomeBtn.addEventListener('click', () => {
+        location.reload();
+    });
+}
