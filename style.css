@@ -48,8 +48,8 @@ canvas {
     left: 0;
     width: 100%; 
     height: 100%; 
-    object-fit: contain;
-    background-color: rgba(0,0,0,0.7); 
+    object-position: center;
+    object-fit: fill;
     z-index: 10;
 }
 
@@ -284,11 +284,11 @@ canvas {
 
 #win_menu, #game_over_menu {
     position: absolute;
-    bottom: 50px;
+    bottom: 23px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 15px; 
+    gap: 60px; 
     align-items: center;
     z-index: 999;
 }
@@ -302,14 +302,13 @@ canvas {
     bottom: auto;
     left: auto;
     transform: none;
-    width: 120px; 
     min-height: 40px; 
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     padding: 5px 10px; 
-    font-size: 12px; 
+    font-size: 16px; 
     font-family: 'Arial Black', sans-serif;
     text-transform: uppercase;
     background: linear-gradient(135deg, #ffaa00 0%, #d45d00 100%);

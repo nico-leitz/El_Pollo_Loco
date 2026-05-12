@@ -61,7 +61,10 @@ class World {
                 if (this.character.speedY < 0 && this.character.isAboveGround()) {
                     if (enemy instanceof Chicken || enemy instanceof SmallChicken) {
                         this.killEnemy(enemy);
+                        
+                        // Pepe prallt ab und die Animation wird zurückgesetzt
                         this.character.speedY = 15;
+                        this.resetCharacterJumpAnimation();
                     }
                 } else {
                     if (!this.character.isHurt() && !enemy.isDead) {
@@ -81,7 +84,9 @@ class World {
 
                 if (isFalling && isAboveEnemy) { 
                     this.killEnemy(enemy);
+                    
                     this.character.speedY = 15; 
+                    this.resetCharacterJumpAnimation();
                 } else {
                     if (!this.character.isHurt()) { 
                         this.character.hit(20);
@@ -90,6 +95,15 @@ class World {
                 }
             }
         });
+    }
+
+    resetCharacterJumpAnimation() {
+        this.character.currentJumpImage = 0;
+        this.character.jumpTick = 0;
+        if (this.character.IMAGES_JUMPING && this.character.IMAGES_JUMPING.length > 0) {
+            let path = this.character.IMAGES_JUMPING[0];
+            this.character.img = this.character.imgCache[path];
+        }
     }
 
     checkCollisionWithEndboss() {
@@ -149,21 +163,21 @@ class World {
     };
 
     killEnemy(enemy) {
-    if (!enemy.isDead) {
-        if (typeof enemy.die === 'function') {
-            enemy.die();
-        } else {
-            enemy.isDead = true; 
-        }
-        
-        setTimeout(() => {
-            let index = this.level.enemies.indexOf(enemy);
-            if (index > -1) {
-                this.level.enemies.splice(index, 1);
+        if (!enemy.isDead) {
+            if (typeof enemy.die === 'function') {
+                enemy.die();
+            } else {
+                enemy.isDead = true; 
             }
-        }, 1000);
+            
+            setTimeout(() => {
+                let index = this.level.enemies.indexOf(enemy);
+                if (index > -1) {
+                    this.level.enemies.splice(index, 1);
+                }
+            }, 1000);
+        }
     }
-}
 
     handleEnemyHit(enemy) {
         if (enemy instanceof Endboss) {
@@ -188,17 +202,17 @@ class World {
     }
 
     showWinScreen() {
-    setTimeout(() => {
-        if (typeof showWinScreen === 'function') {
-            showWinScreen();
-        } else {
-            const winScreen = document.getElementById('win_screen');
-            const winMenu = document.getElementById('win_menu');
-            if (winScreen) winScreen.classList.remove('d_none');
-            if (winMenu) winMenu.classList.remove('d_none');
-        }
-    }, 1000); 
-}
+        setTimeout(() => {
+            if (typeof showWinScreen === 'function') {
+                showWinScreen();
+            } else {
+                const winScreen = document.getElementById('win_screen');
+                const winMenu = document.getElementById('win_menu');
+                if (winScreen) winScreen.classList.remove('d_none');
+                if (winMenu) winMenu.classList.remove('d_none');
+            }
+        }, 1000); 
+    }
 
     checkBossHit() {
         this.throwableObjects.forEach((bottle) => {
@@ -239,7 +253,6 @@ class World {
         requestAnimationFrame(function() {
              self.draw();
         });
-
     }
 
     addObjectsToMap(objects) {
@@ -247,7 +260,6 @@ class World {
             this.addToMap(object)
         });
     }
-
 
     addToMap(moveableObject) {
         if (moveableObject.otherDirection) {
@@ -261,8 +273,6 @@ class World {
             moveableObject.width,
             moveableObject.height
         );
-
-      //  this.drawDebugFrames(moveableObject);
 
         if (moveableObject.otherDirection) {
             this.flipImageBack(moveableObject);

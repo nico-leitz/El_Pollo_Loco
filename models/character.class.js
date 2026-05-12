@@ -5,6 +5,7 @@ class Character extends MoveableObject {
     width = 140;
     isGameOver = false;
     currentJumpImage = 0;
+    jumpTick = 0;
 
     offset = {
         top: 120,
@@ -61,7 +62,7 @@ class Character extends MoveableObject {
     constructor() {
         super();
         this.loadImage("img/2_character_pepe/2_walk/W-21.png");
-        this.speed = 2.45;
+        this.speed = 3.2; 
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
@@ -91,6 +92,7 @@ class Character extends MoveableObject {
             } 
             else {
                 this.currentJumpImage = 0;
+                this.jumpTick = 0;
 
                 if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                     this.playAnimation(this.IMAGES_WALKING);
@@ -110,11 +112,18 @@ class Character extends MoveableObject {
     }
 
     playJumpAnimation() {
-        if (this.currentJumpImage < this.IMAGES_JUMPING.length) {
+        if (this.currentJumpImage >= this.IMAGES_JUMPING.length) {
+            let lastPath = this.IMAGES_JUMPING[this.IMAGES_JUMPING.length - 1];
+            this.img = this.imgCache[lastPath];
+            return;
+        }
+
+        if (this.jumpTick % 2 === 0) {
             let path = this.IMAGES_JUMPING[this.currentJumpImage];
             this.img = this.imgCache[path];
             this.currentJumpImage++;
         }
+        this.jumpTick++;
     }
 
     move() {
@@ -151,18 +160,22 @@ class Character extends MoveableObject {
     }
 
     moveRight() {
-        this.positionX += 2.45;
+        this.positionX += this.speed; 
         this.otherDirection = false;
     }
 
     moveLeft() {
-        this.positionX -= 2.45;
+        this.positionX -= this.speed; 
         this.otherDirection = true;  
     }
 
     jump() {
         this.speedY = 15;
         this.currentJumpImage = 0;
+        this.jumpTick = 0;
+        
+        let path = this.IMAGES_JUMPING[0];
+        this.img = this.imgCache[path];
     }
 
     checkGameOver() {
