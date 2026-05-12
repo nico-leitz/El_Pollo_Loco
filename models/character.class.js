@@ -8,10 +8,10 @@ class Character extends MoveableObject {
     jumpTick = 0;
 
     offset = {
-        top: 120,
+        top: 60,
         bottom: 0,
-        left: 20,
-        right: 20
+        left: 40,   
+        right: 40
     };
 
     IMAGES_WALKING = [

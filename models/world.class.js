@@ -61,8 +61,7 @@ class World {
                 if (this.character.speedY < 0 && this.character.isAboveGround()) {
                     if (enemy instanceof Chicken || enemy instanceof SmallChicken) {
                         this.killEnemy(enemy);
-                        
-                        // Pepe prallt ab und die Animation wird zurückgesetzt
+
                         this.character.speedY = 15;
                         this.resetCharacterJumpAnimation();
                     }

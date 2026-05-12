@@ -10,6 +10,13 @@ class CoinBar extends StatusBar {
         'img/7_statusbars/1_statusbar/1_statusbar_coin/orange/100.png'
     ];
 
+    offset = {
+        top: 15,
+        bottom: 10,
+        left: 30,
+        right: 30
+    };
+
     constructor() {
         super();
         this.loadImages(this.IMAGES);
