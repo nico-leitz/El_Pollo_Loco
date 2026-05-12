@@ -31,8 +31,14 @@ if (startBtnRef) {
         if (gameOverScreenRef) gameOverScreenRef.classList.add('d_none');
         if (gameOverMenuRef) gameOverMenuRef.classList.add('d_none');
 
+        const mobileImprint = document.getElementById('mobile_imprint_link');
+        if (mobileImprint) mobileImprint.style.display = 'none';
+
         if (window.matchMedia("(hover: none)").matches) {
-            if (mobileControlsRef) mobileControlsRef.classList.remove('d_none');
+            if (mobileControlsRef) {
+                mobileControlsRef.classList.remove('d_none');
+                mobileControlsRef.style.display = 'flex';
+            }
             enterFullscreen(fullscreenRef);
         }
         
@@ -47,6 +53,11 @@ if (gameOverRestartBtn) {
         if (startScreenRef) startScreenRef.classList.add('d_none');
         if (canvasRef) canvasRef.classList.remove('d_none');
         
+        if (window.matchMedia("(hover: none)").matches && mobileControlsRef) {
+            mobileControlsRef.classList.remove('d_none');
+            mobileControlsRef.style.display = 'flex';
+        }
+
         resetAllIntervals();
         if (typeof init === 'function') init(); 
     });
@@ -64,6 +75,11 @@ if (winRestartBtn) {
         if (winMenuRef) winMenuRef.classList.add('d_none');
         if (canvasRef) canvasRef.classList.remove('d_none');
         
+        if (window.matchMedia("(hover: none)").matches && mobileControlsRef) {
+            mobileControlsRef.classList.remove('d_none');
+            mobileControlsRef.style.display = 'flex';
+        }
+
         resetAllIntervals();
         if (typeof init === 'function') init(); 
     });
@@ -96,6 +112,12 @@ if (fullscreenBtnRef) {
 
 function showGameOverScreen() {
     if (canvasRef) canvasRef.classList.add('d_none');
+    
+    if (mobileControlsRef) {
+        mobileControlsRef.classList.add('d_none');
+        mobileControlsRef.style.display = 'none';
+    }
+    
     if (gameOverScreenRef) gameOverScreenRef.classList.remove('d_none');
     if (gameOverMenuRef) gameOverMenuRef.classList.remove('d_none');
 
@@ -105,7 +127,12 @@ function showGameOverScreen() {
 
 function showWinScreen() {
     if (canvasRef) canvasRef.classList.add('d_none');
-    if (mobileControlsRef) mobileControlsRef.classList.add('d_none');
+
+    if (mobileControlsRef) {
+        mobileControlsRef.classList.add('d_none');
+        mobileControlsRef.style.display = 'none';
+    }
+    
     if (winScreenRef) winScreenRef.classList.remove('d_none');
     if (winMenuRef) winMenuRef.classList.remove('d_none');
 

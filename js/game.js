@@ -58,3 +58,8 @@ if (typeof AudioManager !== 'undefined') {
         updateMuteButtonIcon();
     }
 }
+
+if (window.matchMedia("(hover: none)").matches) {
+    const mobileImprint = document.getElementById('mobile_imprint_link');
+    if (mobileImprint) mobileImprint.style.display = 'block';
+}
