@@ -7,6 +7,13 @@ class CoinObjects extends CollectableObjects {
         'img/8_coin/coin_2.png'
     ];
 
+    offset = {
+        top: 35,
+        bottom: 35,
+        left: 35,  
+        right: 35 
+    };
+
     constructor() {
         super();
         this.loadImage(this.IMAGES[0]); 

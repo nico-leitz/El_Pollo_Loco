@@ -8,7 +8,7 @@ class Character extends MoveableObject {
     jumpTick = 0;
 
     offset = {
-        top: 60,
+        top: 100,
         bottom: 0,
         left: 40,   
         right: 40
