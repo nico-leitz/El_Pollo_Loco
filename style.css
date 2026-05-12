@@ -68,7 +68,7 @@ canvas {
 
 .game_controls button {
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 14px;
     font-family: 'Arial Black', sans-serif;
     text-transform: uppercase;
     background: linear-gradient(135deg, #ffaa00 0%, #d45d00 100%);
@@ -534,14 +534,10 @@ kbd {
     #fullscreen_btn {
         display: none; 
     }
-    #canvas_container .menu_btn, 
-    #canvas_container #game_controls button,
-    #canvas_container #game_over_menu button,
-    #canvas_container #win_menu button {
-        padding: 6px 14px;
-        font-size: 14px;
-        min-width: 100px;
-        height: auto;
+    #canvas_container #mobile_controls #controll_btn,
+    #canvas_container .game_controls #controll_btn,
+    #controll_btn {
+        display: none; 
     }
     .game_footer {
         display: none;
@@ -553,6 +549,9 @@ kbd {
     #canvas_container .mobile-imprint {
         display: none;
     }
+    #game_over_menu {
+        width: max-content;
+    }
 }
 
 @media (orientation: portrait) and (hover: none) and (pointer: coarse) {
@@ -560,6 +559,6 @@ kbd {
         display: flex;
     }
     #mobile_controls {
-        display: none !important;
+        display: none;
     }
 }

@@ -97,6 +97,6 @@ class MoveableObject extends DrawableObject {
 
     isLongIdle() {
         let timePassed = new Date().getTime() - this.lastAction;
-        return timePassed > 15000; 
+        return timePassed > 10000; 
     }
 }
