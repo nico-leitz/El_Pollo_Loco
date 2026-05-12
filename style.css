@@ -8,7 +8,23 @@ body {
     position: relative;
     overflow: hidden;
     background-color: #140f0c;
-    background-image: url('img/epl_background.jpg');
+}
+
+.blurred-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('img/epl_background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    filter: blur(12px);
+    transform: scale(1.05);
+    z-index: 1;
 }
 
 .d_none {
@@ -17,6 +33,7 @@ body {
 
 .canvas-container {
     position: relative;
+    z-index: 10;
     width: 720px;
     height: 480px;
     box-shadow: 0 0 50px rgba(0,0,0,0.5);
@@ -532,7 +549,7 @@ kbd {
 
 @media (hover: none) and (orientation: landscape) {
     #mobile_controls {
-        display: flex !important;
+        display: flex;
     }
 
     #fullscreen_btn,
