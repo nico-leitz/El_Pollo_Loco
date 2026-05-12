@@ -51,3 +51,10 @@ window.addEventListener('keyup', (event) => {
     if(event.keyCode == 68)
     keyboard.D = false;
 });
+
+if (typeof AudioManager !== 'undefined') {
+    AudioManager.init();
+    if (typeof updateMuteButtonIcon === 'function') {
+        updateMuteButtonIcon();
+    }
+}

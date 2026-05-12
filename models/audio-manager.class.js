@@ -17,7 +17,7 @@ class AudioManager {
 
     static BOTTLE_BREAK = new Audio('sounds/throwable/bottleBreak.mp3');
 
-   static allSounds = [
+    static allSounds = [
         AudioManager.CHARACTER_DAMAGE, AudioManager.CHARACTER_DEAD, 
         AudioManager.CHARACTER_JUMP, AudioManager.CHARACTER_WALKING, 
         AudioManager.CHARACTER_SNORING, AudioManager.CHICKEN_DEAD, 
@@ -28,6 +28,17 @@ class AudioManager {
 
     static isMuted = false;
 
+    static init() {
+        let savedMuteState = localStorage.getItem('gameMuted');
+        if (savedMuteState !== null) {
+            AudioManager.isMuted = (savedMuteState === 'true');
+
+            if (AudioManager.isMuted) {
+                AudioManager.allSounds.forEach(sound => sound.pause());
+            }
+        }
+    }
+
     static play(audio, volume) {
         if (AudioManager.isMuted || !audio) return; 
         audio.volume = volume;
@@ -36,9 +47,13 @@ class AudioManager {
 
     static toggleMute() {
         AudioManager.isMuted = !AudioManager.isMuted;
+        
+        localStorage.setItem('gameMuted', AudioManager.isMuted);
+
         if (AudioManager.isMuted) {
             AudioManager.allSounds.forEach(sound => sound.pause());
         }
+        
+        return AudioManager.isMuted; 
     }
-
 }
