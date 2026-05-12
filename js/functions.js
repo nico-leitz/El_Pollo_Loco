@@ -23,119 +23,131 @@ const winMenuRef = document.getElementById('win_menu');
 const winRestartBtn = document.getElementById('win_restart_btn');
 const winHomeBtn = document.getElementById('win_home_btn');
 
-if (startBtnRef) {
+initEventListeners();
+
+function initEventListeners() {
+    setupStartButton();
+    setupGameOverButtons();
+    setupWinButtons();
+    setupControlPanelButtons();
+    setupFullscreenButton();
+}
+
+function setupStartButton() {
+    if (!startBtnRef) return;
     startBtnRef.addEventListener('click', () => {
-        if (startScreenRef) startScreenRef.classList.add('d_none');
-        if (gameControlsRef) gameControlsRef.classList.add('d_none'); 
-        if (controllPanelRef) controllPanelRef.classList.add('d_none'); 
-        if (gameOverScreenRef) gameOverScreenRef.classList.add('d_none');
-        if (gameOverMenuRef) gameOverMenuRef.classList.add('d_none');
-
-        const mobileImprint = document.getElementById('mobile_imprint_link');
-        if (mobileImprint) mobileImprint.style.display = 'none';
-
-        if (window.matchMedia("(hover: none)").matches) {
-            if (mobileControlsRef) {
-                mobileControlsRef.classList.remove('d_none');
-                mobileControlsRef.style.display = 'flex';
-            }
-            enterFullscreen(fullscreenRef);
-        }
-        
+        hideStartScreens();
+        handleMobileStart();
         if (typeof init === 'function') init(); 
     });
 }
 
-if (gameOverRestartBtn) {
-    gameOverRestartBtn.addEventListener('click', () => {
-        if (gameOverScreenRef) gameOverScreenRef.classList.add('d_none');
-        if (gameOverMenuRef) gameOverMenuRef.classList.add('d_none');
-        if (startScreenRef) startScreenRef.classList.add('d_none');
-        if (canvasRef) canvasRef.classList.remove('d_none');
-        
-        if (window.matchMedia("(hover: none)").matches && mobileControlsRef) {
+function hideStartScreens() {
+    if (startScreenRef) startScreenRef.classList.add('d_none');
+    if (gameControlsRef) gameControlsRef.classList.add('d_none'); 
+    if (controllPanelRef) controllPanelRef.classList.add('d_none'); 
+    if (gameOverScreenRef) gameOverScreenRef.classList.add('d_none');
+    if (gameOverMenuRef) gameOverMenuRef.classList.add('d_none');
+    const mobileImprint = document.getElementById('mobile_imprint_link');
+    if (mobileImprint) mobileImprint.style.display = 'none';
+}
+
+function handleMobileStart() {
+    if (window.matchMedia("(hover: none)").matches) {
+        if (mobileControlsRef) {
             mobileControlsRef.classList.remove('d_none');
             mobileControlsRef.style.display = 'flex';
         }
-
-        resetAllIntervals();
-        if (typeof init === 'function') init(); 
-    });
+        enterFullscreen(fullscreenRef);
+    }
 }
 
-if (gameOverHomeBtn) {
-    gameOverHomeBtn.addEventListener('click', () => {
-        location.reload();
-    });
+function setupGameOverButtons() {
+    if (gameOverRestartBtn) {
+        gameOverRestartBtn.addEventListener('click', () => {
+            hideGameOverUI();
+            resetAllIntervals();
+            if (typeof init === 'function') init(); 
+        });
+    }
+    if (gameOverHomeBtn) {
+        gameOverHomeBtn.addEventListener('click', () => location.reload());
+    }
 }
 
-if (winRestartBtn) {
-    winRestartBtn.addEventListener('click', () => {
-        if (winScreenRef) winScreenRef.classList.add('d_none');
-        if (winMenuRef) winMenuRef.classList.add('d_none');
-        if (canvasRef) canvasRef.classList.remove('d_none');
-        
-        if (window.matchMedia("(hover: none)").matches && mobileControlsRef) {
-            mobileControlsRef.classList.remove('d_none');
-            mobileControlsRef.style.display = 'flex';
-        }
-
-        resetAllIntervals();
-        if (typeof init === 'function') init(); 
-    });
+function hideGameOverUI() {
+    if (gameOverScreenRef) gameOverScreenRef.classList.add('d_none');
+    if (gameOverMenuRef) gameOverMenuRef.classList.add('d_none');
+    if (startScreenRef) startScreenRef.classList.add('d_none');
+    if (canvasRef) canvasRef.classList.remove('d_none');
+    showMobileControlsIfMobile();
 }
 
-if (winHomeBtn) {
-    winHomeBtn.addEventListener('click', () => {
-        location.reload();
-    });
+function showMobileControlsIfMobile() {
+    if (window.matchMedia("(hover: none)").matches && mobileControlsRef) {
+        mobileControlsRef.classList.remove('d_none');
+        mobileControlsRef.style.display = 'flex';
+    }
 }
 
-if (controllBtnRef) {
-    controllBtnRef.addEventListener('click', () => {
-        if (controllPanelRef) controllPanelRef.classList.remove('d_none');
-    });
+function setupWinButtons() {
+    if (winRestartBtn) {
+        winRestartBtn.addEventListener('click', () => {
+            if (winScreenRef) winScreenRef.classList.add('d_none');
+            if (winMenuRef) winMenuRef.classList.add('d_none');
+            if (canvasRef) canvasRef.classList.remove('d_none');
+            showMobileControlsIfMobile();
+            resetAllIntervals();
+            if (typeof init === 'function') init(); 
+        });
+    }
+    if (winHomeBtn) {
+        winHomeBtn.addEventListener('click', () => location.reload());
+    }
 }
 
-if (closeControllBtnRef) {
-    closeControllBtnRef.addEventListener('click', () => {
-        if (controllPanelRef) controllPanelRef.classList.add('d_none');
-    });
+function setupControlPanelButtons() {
+    if (controllBtnRef) {
+        controllBtnRef.addEventListener('click', () => {
+            if (controllPanelRef) controllPanelRef.classList.remove('d_none');
+        });
+    }
+    if (closeControllBtnRef) {
+        closeControllBtnRef.addEventListener('click', () => {
+            if (controllPanelRef) controllPanelRef.classList.add('d_none');
+        });
+    }
 }
 
-if (fullscreenBtnRef) {
-    fullscreenBtnRef.addEventListener('click', () => {
-        toggleFullscreen(fullscreenRef);
-        fullscreenBtnRef.blur();
-    });
+function setupFullscreenButton() {
+    if (fullscreenBtnRef) {
+        fullscreenBtnRef.addEventListener('click', () => {
+            toggleFullscreen(fullscreenRef);
+            fullscreenBtnRef.blur();
+        });
+    }
 }
 
-function showGameOverScreen() {
+function hideActiveGameUI() {
     if (canvasRef) canvasRef.classList.add('d_none');
-    
     if (mobileControlsRef) {
         mobileControlsRef.classList.add('d_none');
         mobileControlsRef.style.display = 'none';
     }
-    
+}
+
+function showGameOverScreen() {
+    hideActiveGameUI();
     if (gameOverScreenRef) gameOverScreenRef.classList.remove('d_none');
     if (gameOverMenuRef) gameOverMenuRef.classList.remove('d_none');
-
     resetAllIntervals();
     pauseCharacterSounds();
 }
 
 function showWinScreen() {
-    if (canvasRef) canvasRef.classList.add('d_none');
-
-    if (mobileControlsRef) {
-        mobileControlsRef.classList.add('d_none');
-        mobileControlsRef.style.display = 'none';
-    }
-    
+    hideActiveGameUI();
     if (winScreenRef) winScreenRef.classList.remove('d_none');
     if (winMenuRef) winMenuRef.classList.remove('d_none');
-
     resetAllIntervals();
     pauseCharacterSounds();
 }
@@ -148,11 +160,10 @@ function resetAllIntervals() {
 }
 
 function pauseCharacterSounds() {
-    if (typeof AudioManager !== 'undefined') {
-        if (AudioManager.CHARACTER_WALKING) AudioManager.CHARACTER_WALKING.pause();
-        if (AudioManager.CHARACTER_DAMAGE) AudioManager.CHARACTER_DAMAGE.pause();
-        if (AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
-    }
+    if (typeof AudioManager === 'undefined') return;
+    if (AudioManager.CHARACTER_WALKING) AudioManager.CHARACTER_WALKING.pause();
+    if (AudioManager.CHARACTER_DAMAGE) AudioManager.CHARACTER_DAMAGE.pause();
+    if (AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
 }
 
 function toggleFullscreen(element) {
@@ -185,12 +196,11 @@ function exitFullscreen() {
 
 function updateMuteButtonIcon() {
     let icon = document.getElementById('mute_icon');
-    if (icon && typeof AudioManager !== 'undefined') {
-        if (AudioManager.isMuted) {
-            icon.src = 'img/sound-off.png'; 
-        } else {
-            icon.src = 'img/volume-up.png';
-        }
+    if (!icon || typeof AudioManager === 'undefined') return;
+    if (AudioManager.isMuted) {
+        icon.src = 'img/sound-off.png'; 
+    } else {
+        icon.src = 'img/volume-up.png';
     }
 }
 
@@ -199,7 +209,6 @@ function toggleMuteBtn() {
         AudioManager.toggleMute();
         updateMuteButtonIcon(); 
     }
-
     if (muteBtnRef) {
         muteBtnRef.blur(); 
     }
@@ -208,27 +217,23 @@ function toggleMuteBtn() {
 function bindTouchEvents() {
     setTimeout(() => {
         if (typeof keyboard === 'undefined') return;
-
         const btnMap = [
-            { id: 'btn_left', key: 'LEFT' },
-            { id: 'btn_right', key: 'RIGHT' },
-            { id: 'btn_jump', key: 'SPACE' },
-            { id: 'btn_throw', key: 'D' }
+            { id: 'btn_left', key: 'LEFT' }, { id: 'btn_right', key: 'RIGHT' },
+            { id: 'btn_jump', key: 'SPACE' }, { id: 'btn_throw', key: 'D' }
         ];
-
-        btnMap.forEach(btn => {
-            const element = document.getElementById(btn.id);
-            if (element) {
-                element.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    keyboard[btn.key] = true;
-                });
-
-                element.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    keyboard[btn.key] = false;
-                });
-            }
-        });
+        btnMap.forEach(btn => attachTouchListeners(btn));
     }, 500);
+}
+
+function attachTouchListeners(btn) {
+    const element = document.getElementById(btn.id);
+    if (!element) return;
+    element.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keyboard[btn.key] = true;
+    });
+    element.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keyboard[btn.key] = false;
+    });
 }
