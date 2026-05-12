@@ -61,7 +61,7 @@ class World {
                 if (this.character.speedY < 0 && this.character.isAboveGround()) {
                     if (enemy instanceof Chicken || enemy instanceof SmallChicken) {
                         this.killEnemy(enemy);
-
+                        
                         this.character.speedY = 15;
                         this.resetCharacterJumpAnimation();
                     }
@@ -141,7 +141,7 @@ class World {
             this.level.enemies.forEach((enemy) => {
                 if (!bottle.afterBottleSplash && bottle.isColliding(enemy)) {
                     bottle.throwBottleAnimation();
-                    this.handleEndbossHit(enemy);
+                    this.handleEnemyHit(enemy); 
                 }
             });
         });
@@ -182,6 +182,10 @@ class World {
         if (enemy instanceof Endboss) {
             enemy.hit(20); 
             this.endbossHealthBar.setPercentage(enemy.energy);
+            
+            if (enemy.isDead()) {
+                this.showWinScreen();
+            }
         } else {
             this.killEnemy(enemy);
         }
