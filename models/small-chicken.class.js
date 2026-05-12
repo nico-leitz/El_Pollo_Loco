@@ -14,8 +14,8 @@ class SmallChicken extends Chicken {
     ];
 
     offset = {
-        top: 5,
-        bottom: 5,
+        top: 0,
+        bottom: 0,
         right: 5,
         left: 5
     }
