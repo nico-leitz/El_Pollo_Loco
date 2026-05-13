@@ -1,16 +1,40 @@
+/**
+ * Represents the main game world engine.
+ * Responsible for rendering the scene, managing the game loop, handling collisions, 
+ * and synchronizing game states between the character, level, and UI.
+ */
 class World {
+    /** @type {Character} The main playable character instance. */
     character = new Character();
+    /** @type {Level} The current level container holding all enemies and objects. */
     level = level1;
+    /** @type {HTMLCanvasElement} The HTML canvas element used for rendering. */
     canvas;
+    /** @type {CanvasRenderingContext2D} The 2D rendering context of the canvas. */
     ctx;
+    /** @type {Keyboard} The input listener tracking active key states. */
     keyboard;
+    /** @type {number} The horizontal camera offset used for scrolling. */
     camera_x = 0;
+
+    /** @type {HealthBar} Visual UI bar representing character health. */
     healthBar;
+    /** @type {CoinBar} Visual UI bar representing collected coins. */
     coinBar;
+    /** @type {BottleBar} Visual UI bar representing available salsa bottles. */
     bottleBar;
+    /** @type {EndbossHealthBar} Visual UI bar representing the boss's health. */
     endbossHealthBar;
+    
+    /** @type {ThrowableObject[]} List of active flying projectile objects. */
     throwableObjects = [];
 
+    /**
+     * Initializes the game world, sets up the drawing context, UI bars, 
+     * and starts the main game and rendering loops.
+     * @param {HTMLCanvasElement} canvas - The canvas element to draw on.
+     * @param {Keyboard} keyboard - The keyboard input instance.
+     */
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -21,6 +45,10 @@ class World {
         this.run();
     }
 
+    /**
+     * Pre-instantiates all status bars for the game interface.
+     * @returns {void}
+     */
     initBars() {
         this.healthBar = new HealthBar();
         this.coinBar = new CoinBar();
@@ -28,6 +56,11 @@ class World {
         this.endbossHealthBar = new EndbossHealthBar();
     }
 
+    /**
+     * Establishes a bidirectional link between the world and its main entities 
+     * (Character and Endboss) to allow them to access world-level properties.
+     * @returns {void}
+     */
     setWorld() {
         this.character.world = this;
         this.endboss = this.level.enemies.find(enemy => enemy instanceof Endboss);
@@ -36,6 +69,11 @@ class World {
         }
     }
 
+    /**
+     * Starts the master logic interval at 100ms, triggering collision checks 
+     * and input-based object spawning.
+     * @returns {void}
+     */
     run() {
         setInterval(() => {
             this.checkCollisionsWithChicken();
@@ -47,6 +85,10 @@ class World {
         }, 100);
     }
 
+    /**
+     * Checks for intersections between the character and standard enemies.
+     * @returns {void}
+     */
     checkCollisionsWithChicken() {
         this.level.enemies.forEach((enemy) => {
             if (!enemy.isDead && this.character.isColliding(enemy)) {
@@ -55,6 +97,12 @@ class World {
         });
     }
 
+    /**
+     * Evaluates if a collision with an enemy results in a kill (jumped on) 
+     * or character damage.
+     * @param {MoveableObject} enemy - The enemy involved in the collision.
+     * @returns {void}
+     */
     handleChickenCollisionScenario(enemy) {
         let isFalling = this.character.speedY < 0;
         let isAbove = (this.character.positionY + this.character.height) < (enemy.positionY + enemy.height);
@@ -67,6 +115,11 @@ class World {
         }
     }
 
+    /**
+     * Deducts health from the character, updates the UI bar, and respects immunity frames.
+     * @param {number} amount - Health points to deduct.
+     * @returns {void}
+     */
     damageCharacter(amount) {
         if (!this.character.isHurt()) { 
             this.character.hit(amount);
@@ -74,6 +127,11 @@ class World {
         }
     }
 
+    /**
+     * Forcefully resets the character's jump animation state, typically after 
+     * successfully jumping on an enemy's head.
+     * @returns {void}
+     */
     resetCharacterJumpAnimation() {
         this.character.currentJumpImage = 0;
         this.character.jumpTick = 0;
@@ -83,6 +141,10 @@ class World {
         }
     }
 
+    /**
+     * Specifically handles collision logic between the character and the final boss.
+     * @returns {void}
+     */
     checkCollisionWithEndboss() {
         this.level.enemies.forEach((enemy) => {
             if (enemy instanceof Endboss && this.character.isColliding(enemy)) {
@@ -91,6 +153,11 @@ class World {
         });
     }
 
+    /**
+     * Detects if the character collects a salsa bottle, updates the inventory bar,
+     * and removes the item from the map.
+     * @returns {void}
+     */
     checkCollisionsWithBottles() {
         this.level.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle) && this.bottleBar.amount < 100) {
@@ -102,6 +169,11 @@ class World {
         });
     }
 
+    /**
+     * Monitors keyboard input for the 'D' key to instantiate and throw a 
+     * salsa bottle projectile if inventory allows.
+     * @returns {void}
+     */
     checkThrowObjects() {
         if (this.keyboard.D && this.bottleBar.amount > 0) {
             let bottle = new ThrowableObject(
@@ -115,6 +187,10 @@ class World {
         }
     }
 
+    /**
+     * Checks if flying projectiles collide with any active enemies.
+     * @returns {void}
+     */
     checkCollisionsWithThrowableBottles() {
         this.throwableObjects.forEach((bottle) => {
             this.level.enemies.forEach((enemy) => {
@@ -126,6 +202,10 @@ class World {
         });
     }
 
+    /**
+     * Detects if the character collects a coin and updates the UI bar.
+     * @returns {void}
+     */
     checkCollisionsWithCoins() {
         this.level.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
@@ -137,6 +217,12 @@ class World {
         });
     }
 
+    /**
+     * Triggers the death sequence for a minion enemy and removes it from 
+     * the level after a brief delay.
+     * @param {MoveableObject} enemy - The target enemy.
+     * @returns {void}
+     */
     killEnemy(enemy) {
         if (enemy.isDead) return;
         if (typeof enemy.die === 'function') {
@@ -150,6 +236,11 @@ class World {
         }, 1000);
     }
 
+    /**
+     * Determines whether an enemy hit results in boss damage or a standard kill.
+     * @param {MoveableObject} enemy - The enemy that was hit.
+     * @returns {void}
+     */
     handleEnemyHit(enemy) {
         if (enemy instanceof Endboss) {
             enemy.hit(20); 
@@ -160,6 +251,10 @@ class World {
         }
     }
 
+    /**
+     * Triggers the victory UI sequence after a brief thematic delay.
+     * @returns {void}
+     */
     showWinScreen() {
         setTimeout(() => {
             if (typeof showWinScreen === 'function') {
@@ -170,6 +265,11 @@ class World {
         }, 1000); 
     }
 
+    /**
+     * Directly manipulates the DOM to display victory elements if the 
+     * global utility function is unavailable.
+     * @returns {void}
+     */
     fallbackWinScreenDisplay() {
         const winScreen = document.getElementById('win_screen');
         const winMenu = document.getElementById('win_menu');
@@ -177,6 +277,11 @@ class World {
         if (winMenu) winMenu.classList.remove('d_none');
     }
 
+    /**
+     * Main rendering loop using requestAnimationFrame. Clears the canvas and 
+     * redraws all layers, entities, and UI elements.
+     * @returns {void}
+     */
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(Math.round(this.camera_x), 0);
@@ -186,9 +291,14 @@ class World {
         this.ctx.translate(Math.round(this.camera_x), 0);
         this.addToMap(this.character);
         this.ctx.translate(-Math.round(this.camera_x), 0);
+        this.drawEndbossHealthBar(); // Drawn last/overlay
         requestAnimationFrame(() => this.draw());
     }
 
+    /**
+     * Renders all non-UI game objects into the world map.
+     * @returns {void}
+     */
     drawWorldGameObjects() {
         this.addObjectsToMap(this.level.layers);
         this.addObjectsToMap(this.level.clouds);
@@ -198,23 +308,41 @@ class World {
         this.addObjectsToMap(this.throwableObjects);
     }
 
+    /**
+     * Renders all standard interface bars in a fixed screen position.
+     * @returns {void}
+     */
     drawInterfaceBars() {
         this.addToMap(this.healthBar);
         this.addToMap(this.coinBar);
         this.addToMap(this.bottleBar);
-        this.drawEndbossHealthBar();
     }
 
+    /**
+     * Helper to batch-process a list of drawable objects for mapping.
+     * @param {DrawableObject[]} objects - Array of entities to draw.
+     * @returns {void}
+     */
     addObjectsToMap(objects) {
         objects.forEach(object => this.addToMap(object));
     }
 
+    /**
+     * Handles the specific drawing logic for a single entity, including sprite flipping.
+     * @param {DrawableObject|MoveableObject} mo - The object to render.
+     * @returns {void}
+     */
     addToMap(mo) {
         if (mo.otherDirection) this.flipImage(mo);
         this.ctx.drawImage(mo.img, mo.positionX, mo.positionY, mo.width, mo.height);
         if (mo.otherDirection) this.flipImageBack(mo);
     }
 
+    /**
+     * Modifies the canvas context to mirror images horizontally for movement.
+     * @param {MoveableObject} moveableObject - The object to flip.
+     * @returns {void}
+     */
     flipImage(moveableObject) {
         this.ctx.save();
         this.ctx.translate(moveableObject.width, 0);
@@ -222,11 +350,21 @@ class World {
         moveableObject.positionX = moveableObject.positionX * -1;
     }
 
+    /**
+     * Restores the canvas context state after flipping an image.
+     * @param {MoveableObject} moveableObject - The object to restore.
+     * @returns {void}
+     */
     flipImageBack(moveableObject) {
         moveableObject.positionX = moveableObject.positionX * -1;
         this.ctx.restore();
     }
 
+    /**
+     * Conditionally renders the boss's health bar if the boss is visible 
+     * on screen and still alive.
+     * @returns {void}
+     */
     drawEndbossHealthBar() {
         let boss = this.level.enemies.find(e => e instanceof Endboss);
         if (!boss) return;
