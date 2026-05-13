@@ -71,6 +71,7 @@ class ThrowableObject extends MoveableObject {
         let throwInterval = setInterval(() => {
             if (!this.afterBottleSplash) {
                 this.positionX += this.otherDirection ? -10 : 10;
+                // If it hits the ground (Y > 350), trigger the animation and sound
                 if (this.positionY > 350) this.throwBottleAnimation();
             } else {
                 clearInterval(throwInterval);
@@ -92,12 +93,15 @@ class ThrowableObject extends MoveableObject {
 
     /**
      * Transitions the object state from "flying" to "splash". 
-     * Disables gravity and lateral movement to play the impact sequence.
+     * Disables gravity, plays the impact sound, and starts the splash sequence.
      * @returns {void}
      */
     throwBottleAnimation() {
         if (this.afterBottleSplash) return;
         this.afterBottleSplash = true;
+
+        AudioManager.play(AudioManager.BOTTLE_BREAK, 0.1);
+
         this.speedY = 0;
         this.acceleration = 0;
         this.playSplash();

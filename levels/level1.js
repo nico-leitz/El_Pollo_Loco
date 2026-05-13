@@ -54,20 +54,14 @@ function createLevelBottles() {
 
         new BottleObjects(), new BottleObjects(), new BottleObjects(), 
         new BottleObjects(), new BottleObjects(), new BottleObjects(), 
-        new BottleObjects(), new BottleObjects(), new BottleObjects(),
-        new BottleObjects(),
 
-        new BottleObjects(2800),
-        new BottleObjects(2800),
-        new BottleObjects(2800),
-        new BottleObjects(2800),
-        new BottleObjects(2800),
-        new BottleObjects(2800),
-        new BottleObjects(2800),
-        new BottleObjects(2800),
-        new BottleObjects(2800),
-        new BottleObjects(2800),
-        new BottleObjects(2800)
+        new BottleObjects(3200),
+        new BottleObjects(3250),
+        new BottleObjects(3300),
+        new BottleObjects(3350),
+        new BottleObjects(3400),
+        new BottleObjects(3450),
+        new BottleObjects(3500)
     ];
 }
 

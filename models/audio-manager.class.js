@@ -1,5 +1,5 @@
 /**
- * Central state and control manager handles the global audio ecosystem.
+ * Central state and control manager for the global audio ecosystem.
  * Pre-instantiates game sounds and handles storage-based mute states.
  */
 class AudioManager {
@@ -39,6 +39,9 @@ class AudioManager {
     /** @type {HTMLAudioElement} Impact feedback sound for throwable ground objects. */
     static BOTTLE_BREAK = new Audio('sounds/throwable/bottleBreak.mp3');
 
+    /** @type {HTMLAudioElement} Music for the start menu. */
+    static MENU_THEME = new Audio('sounds/start_menu/start_menu_theme.mp3');
+
     /**
      * Complete index list containing all configured audio asset pointers for global iteration.
      * @type {HTMLAudioElement[]} 
@@ -49,25 +52,20 @@ class AudioManager {
         AudioManager.CHARACTER_SNORING, AudioManager.CHICKEN_DEAD, 
         AudioManager.CHICKEN_DEAD_2, AudioManager.BOTTLE_COLLECT, 
         AudioManager.COIN_COLLECT, AudioManager.ENDBOSS_APPROACH, 
-        AudioManager.GAME_START, AudioManager.BOTTLE_BREAK
+        AudioManager.GAME_START, AudioManager.BOTTLE_BREAK, 
+        AudioManager.MENU_THEME
     ];
 
-    /**
-     * Tracking flag indicating whether global output is currently suppressed.
-     * @type {boolean} 
-     */
+    /** @type {boolean} Tracking flag indicating whether global output is suppressed. */
     static isMuted = false;
 
     /**
-     * Reads persistent user settings from the browser's LocalStorage structure,
-     * configures initial state tracking, and pauses running sounds if muted.
-     * @returns {void}
+     * Configures initial state and handles storage-based mute settings.
      */
     static init() {
         let savedMuteState = localStorage.getItem('gameMuted');
         if (savedMuteState !== null) {
             AudioManager.isMuted = (savedMuteState === 'true');
-
             if (AudioManager.isMuted) {
                 AudioManager.allSounds.forEach(sound => sound.pause());
             }
@@ -75,32 +73,46 @@ class AudioManager {
     }
 
     /**
-     * Executes play demands for a specific audio element at an isolated volume tier,
-     * provided the application instance is not globally muted.
-     * @param {HTMLAudioElement|null} audio - The target HTML audio node intended for playing.
-     * @param {number} volume - Normalized scaling value spanning from 0.0 to 1.0.
-     * @returns {void}
+     * Plays a specific audio element.
+     * @param {HTMLAudioElement|null} audio - The target audio node.
+     * @param {number} volume - Volume level (0.0 to 1.0).
+     * @param {boolean} [loop=false] - Whether the sound should loop.
      */
-    static play(audio, volume) {
+    static play(audio, volume, loop = false) {
         if (AudioManager.isMuted || !audio) return; 
         audio.volume = volume;
-        audio.play();
+        audio.loop = loop;
+        audio.play().catch(error => console.warn("Playback prevented:", error));
     }
 
     /**
-     * Flips the current boolean audio restriction flag, pushes the state into 
-     * local memory, and halts active sounds upon suppression activation.
-     * @returns {boolean} The updated global boolean suppression state.
+     * Stops a specific audio element and resets its position.
+     * @param {HTMLAudioElement|null} audio - The target audio node.
+     */
+    static stop(audio) {
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    }
+
+    /**
+     * Toggles mute state and resumes looping music if unmuted.
      */
     static toggleMute() {
         AudioManager.isMuted = !AudioManager.isMuted;
-        
         localStorage.setItem('gameMuted', AudioManager.isMuted);
 
         if (AudioManager.isMuted) {
             AudioManager.allSounds.forEach(sound => sound.pause());
+        } else {
+
+            AudioManager.allSounds.forEach(sound => {
+                if (sound.loop) {
+                    sound.play().catch(e => console.warn("Resume blocked:", e));
+                }
+            });
         }
-        
         return AudioManager.isMuted; 
     }
 }

@@ -37,6 +37,19 @@ class World {
     /** @type {ThrowableObject[]} List of active flying projectile objects. */
     throwableObjects = [];
 
+    /** @type {boolean} Flag to ensure the hint is only triggered once. */
+    hintShown = false;
+
+    /** @type {boolean} Controls the visibility of the speech bubble. */
+    showHint = false;
+
+    /** * @type {boolean} 
+     * State variable to ensure the boss approach audio is only triggered once 
+     * when the health bar first appears.
+     */
+    bossSoundPlayed = false;
+
+
     /**
      * Initializes the game world, sets up the drawing context, UI bars, 
      * and starts the main game and rendering loops.
@@ -90,7 +103,21 @@ class World {
             this.checkCollisionsWithCoins();
             this.checkCollisionsWithThrowableBottles();
             this.checkThrowObjects();
+            this.checkBossHintTrigger(); // New logic integrated here
         }, 100);
+    }
+
+    /**
+     * Checks if the character reached the bottle supply area to display a tactical hint.
+     */
+    checkBossHintTrigger() {
+        if (!this.hintShown && this.character.positionX > 2700) {
+            this.hintShown = true;
+            this.showHint = true;
+            setTimeout(() => {
+                this.showHint = false;
+            }, 5000);
+        }
     }
 
     /**
@@ -296,11 +323,86 @@ class World {
         this.drawWorldGameObjects();
         this.ctx.translate(Math.round(-this.camera_x), 0);
         this.drawInterfaceBars();
+
+        if (this.showHint) {
+            this.drawSpeechBubble();
+        }
+
         this.ctx.translate(Math.round(this.camera_x), 0);
         this.addToMap(this.character);
         this.ctx.translate(-Math.round(this.camera_x), 0);
-        this.drawEndbossHealthBar(); // Drawn last/overlay
+        this.drawEndbossHealthBar(); 
         requestAnimationFrame(() => this.draw());
+    }
+
+    /**
+     * Renders a dynamic, stylized speech bubble that automatically adjusts its 
+     * width based on the text length.
+     */
+    /**
+     * Renders a compact, semi-transparent speech bubble with a smaller font
+     * and the updated "infinite amount" tactical hint.
+     */
+    drawSpeechBubble() {
+        const text = "I should use these salsa bottles to defeat the divine chicken!";
+        
+        this.ctx.save();
+        
+        // --- 1. Smaller Font (16px) ---
+        this.ctx.font = 'bold 16px "Comic Sans MS", "Marker Felt", sans-serif';
+        
+        // --- 2. Compact Dynamic Dimensions ---
+        const textMetrics = this.ctx.measureText(text);
+        const textWidth = textMetrics.width;
+        
+        const padding = 20; 
+        const width = textWidth + padding;
+        const height = 40;  
+        
+        const x = (this.canvas.width / 2) - (width / 2);
+        const y = 80;       
+        const radius = 12;  
+
+        // --- 3. Subtle Shadow ---
+        this.ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+        this.ctx.shadowBlur = 6;
+        this.ctx.shadowOffsetX = 3;
+        this.ctx.shadowOffsetY = 3;
+
+        // --- 4. Semi-Transparent Path (80% Opacity) ---
+        this.ctx.beginPath();
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; 
+        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)'; 
+        this.ctx.lineWidth = 3; 
+
+        this.ctx.moveTo(x + radius, y);
+        this.ctx.lineTo(x + width - radius, y);
+        this.ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        this.ctx.lineTo(x + width, y + height - radius);
+        this.ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        
+        // Compact Tail
+        this.ctx.lineTo(x + (width / 2) + 10, y + height);
+        this.ctx.lineTo(x + (width / 2), y + height + 12);
+        this.ctx.lineTo(x + (width / 2) - 10, y + height);
+
+        this.ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        this.ctx.lineTo(x, y + radius);
+        this.ctx.quadraticCurveTo(x, y, x + radius, y);
+        this.ctx.closePath();
+
+        // --- 5. Render Bubble ---
+        this.ctx.fill();
+        this.ctx.shadowColor = 'transparent'; 
+        this.ctx.stroke();
+
+        // --- 6. Render Text ---
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.9)'; 
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(text, x + width / 2, y + height / 2);
+
+        this.ctx.restore();
     }
 
     /**
@@ -369,17 +471,35 @@ class World {
     }
 
     /**
-     * Conditionally renders the boss's health bar if the boss is visible 
-     * on screen and still alive.
+     * Manages the visibility of the boss health bar and triggers the approach audio.
+     * The sound re-triggers every time the boss re-enters the player's field of view.
      * @returns {void}
      */
     drawEndbossHealthBar() {
         let boss = this.level.enemies.find(e => e instanceof Endboss);
         if (!boss) return;
+
         let edge = -this.camera_x + this.canvas.width;
-        if (boss.positionX < edge && boss.energy > 0 && this.endbossHealthBar) {
+        let isBossVisible = boss.positionX < edge && boss.energy > 0;
+
+        if (isBossVisible && this.endbossHealthBar) {
+            this.handleBossEntranceSound();
             this.endbossHealthBar.setPercentage(boss.energy);
             this.addToMap(this.endbossHealthBar);
+        } else {
+            // Reset the flag when the boss leaves the screen
+            this.bossBarVisible = false;
+        }
+    }
+
+    /**
+     * Checks if the boss just entered the screen and plays the approach sound if so.
+     * @private
+     */
+    handleBossEntranceSound() {
+        if (!this.bossBarVisible) {
+            this.bossBarVisible = true;
+            AudioManager.play(AudioManager.ENDBOSS_APPROACH, 0.5);
         }
     }
 }

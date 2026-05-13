@@ -55,12 +55,15 @@ const winRestartBtn = document.getElementById('win_restart_btn');
 /** @type {HTMLButtonElement | null} Button to return to the home screen after winning. */
 const winHomeBtn = document.getElementById('win_home_btn');
 
+/** @type {boolean} Internal flag to prevent menu music from triggering after game starts. */
+let isGameplayRunning = false;
+
+// Initialize listeners
 initEventListeners();
+initMenuMusic();
 
 /**
- * Initializes all event listeners for the game interface, including buttons for 
- * starting the game, game over states, win states, control panels, and fullscreen mode.
- * @returns {void}
+ * Initializes all event listeners for the game interface.
  */
 function initEventListeners() {
     setupStartButton();
@@ -71,23 +74,60 @@ function initEventListeners() {
 }
 
 /**
- * Sets up the click event listener for the start game button to trigger visibility changes,
- * mobile controls handling, and game initialization.
- * @returns {void}
+ * Starts the MENU_THEME loop when the user first clicks anywhere on the page.
+ * This is required to bypass browser autoplay restrictions.
+ */
+function initMenuMusic() {
+    const startMusicOnFirstClick = () => {
+        if (!isGameplayRunning) {
+            AudioManager.play(AudioManager.MENU_THEME, 0.002, true);
+        }
+        window.removeEventListener('click', startMusicOnFirstClick);
+    };
+    window.addEventListener('click', startMusicOnFirstClick);
+}
+
+/**
+ * Handles the transition from menu to game.
+ * Stops the menu version of the music.
+ * Plays the GAME_START jingle once.
+ * Restarts MENU_THEME loop for gameplay at ultra-low volume.
  */
 function setupStartButton() {
     if (!startBtnRef) return;
-    startBtnRef.addEventListener('click', () => {
+
+    startBtnRef.addEventListener('click', (event) => {
+        event.stopPropagation();
+        isGameplayRunning = true;
+
+        AudioManager.stop(AudioManager.MENU_THEME);
+        AudioManager.play(AudioManager.GAME_START, 0.3, false);
+    
+        AudioManager.play(AudioManager.MENU_THEME, 0.002, true); 
+
         hideStartScreens();
         handleMobileStart();
+        hideImprintElements();
+        
         if (typeof init === 'function') init(); 
     });
 }
 
 /**
- * Hides all initial screens, control menus, game over overlays, and general 
- * menu elements to prepare the UI for active gameplay.
- * @returns {void}
+ * Hides imprint elements with high priority.
+ */
+function hideImprintElements() {
+    const footer = document.getElementById('imprint_btn');
+    const mobileLinks = document.querySelectorAll('.mobile-imprint');
+
+    if (footer) footer.style.setProperty('display', 'none', 'important');
+    mobileLinks.forEach(link => {
+        link.style.setProperty('display', 'none', 'important');
+    });
+}
+
+/**
+ * Hides initial screens.
  */
 function hideStartScreens() {
     if (startScreenRef) startScreenRef.classList.add('d_none');
@@ -95,14 +135,10 @@ function hideStartScreens() {
     if (controllPanelRef) controllPanelRef.classList.add('d_none'); 
     if (gameOverScreenRef) gameOverScreenRef.classList.add('d_none');
     if (gameOverMenuRef) gameOverMenuRef.classList.add('d_none');
-    const mobileImprint = document.getElementById('mobile_imprint_link');
-    if (mobileImprint) mobileImprint.style.display = 'none';
 }
 
 /**
- * Detects if the user is on a touch device without standard hover capabilities, 
- * then displays mobile touch controls and forces fullscreen mode.
- * @returns {void}
+ * Handles mobile controls.
  */
 function handleMobileStart() {
     if (window.matchMedia("(hover: none)").matches) {
@@ -115,15 +151,14 @@ function handleMobileStart() {
 }
 
 /**
- * Sets up the click event listeners for the game over overlay buttons 
- * (restarting the game or navigating back to the home state).
- * @returns {void}
+ * Setup Game Over buttons and restarts music loop at ultra-low volume.
  */
 function setupGameOverButtons() {
     if (gameOverRestartBtn) {
         gameOverRestartBtn.addEventListener('click', () => {
             hideGameOverUI();
             resetAllIntervals();
+            AudioManager.play(AudioManager.MENU_THEME, 0.002, true);
             if (typeof init === 'function') init(); 
         });
     }
@@ -133,9 +168,7 @@ function setupGameOverButtons() {
 }
 
 /**
- * Hides the game over screens, ensures the canvas is visible, and conditionally 
- * recovers mobile touch controls if running on a mobile device.
- * @returns {void}
+ * Hides Game Over UI.
  */
 function hideGameOverUI() {
     if (gameOverScreenRef) gameOverScreenRef.classList.add('d_none');
@@ -146,9 +179,7 @@ function hideGameOverUI() {
 }
 
 /**
- * Validates device capabilities and displays the mobile controls overlay 
- * if a touch device is detected.
- * @returns {void}
+ * Shows mobile controls.
  */
 function showMobileControlsIfMobile() {
     if (window.matchMedia("(hover: none)").matches && mobileControlsRef) {
@@ -158,9 +189,7 @@ function showMobileControlsIfMobile() {
 }
 
 /**
- * Sets up event listeners for the win screen UI, allowing players to either 
- * restart the game session or reload to the home menu.
- * @returns {void}
+ * Setup Win buttons and restarts music loop at ultra-low volume.
  */
 function setupWinButtons() {
     if (winRestartBtn) {
@@ -170,6 +199,7 @@ function setupWinButtons() {
             if (canvasRef) canvasRef.classList.remove('d_none');
             showMobileControlsIfMobile();
             resetAllIntervals();
+            AudioManager.play(AudioManager.MENU_THEME, 0.002, true);
             if (typeof init === 'function') init(); 
         });
     }
@@ -179,9 +209,7 @@ function setupWinButtons() {
 }
 
 /**
- * Configures listeners to handle opening and closing actions for the 
- * key bindings/controls information panel.
- * @returns {void}
+ * Handles control panel visibility.
  */
 function setupControlPanelButtons() {
     if (controllBtnRef) {
@@ -197,9 +225,7 @@ function setupControlPanelButtons() {
 }
 
 /**
- * Assigns a click listener to the fullscreen button to toggle view modes 
- * and automatically removes focus from the element to prevent keyboard event issues.
- * @returns {void}
+ * Fullscreen button listener.
  */
 function setupFullscreenButton() {
     if (fullscreenBtnRef) {
@@ -211,9 +237,7 @@ function setupFullscreenButton() {
 }
 
 /**
- * Hides the main active game elements, specifically targeting the drawing canvas 
- * and the on-screen mobile control pad.
- * @returns {void}
+ * Hides active game UI.
  */
 function hideActiveGameUI() {
     if (canvasRef) canvasRef.classList.add('d_none');
@@ -224,35 +248,35 @@ function hideActiveGameUI() {
 }
 
 /**
- * Triggers the visual Game Over UI sequence, shuts down active rendering loops, 
- * and mutes continuous character-related audio effects.
- * @returns {void}
+ * Stops music and shows game over screen.
  */
 function showGameOverScreen() {
     hideActiveGameUI();
     if (gameOverScreenRef) gameOverScreenRef.classList.remove('d_none');
     if (gameOverMenuRef) gameOverMenuRef.classList.remove('d_none');
+    
+    AudioManager.stop(AudioManager.MENU_THEME);
+    
     resetAllIntervals();
     pauseCharacterSounds();
 }
 
 /**
- * Triggers the visual Victory/Win UI sequence, stops all background operational loops, 
- * and ceases repetitive character audio patterns.
- * @returns {void}
+ * Stops music and shows win screen.
  */
 function showWinScreen() {
     hideActiveGameUI();
     if (winScreenRef) winScreenRef.classList.remove('d_none');
     if (winMenuRef) winMenuRef.classList.remove('d_none');
+    
+    AudioManager.stop(AudioManager.MENU_THEME);
+    
     resetAllIntervals();
     pauseCharacterSounds();
 }
 
 /**
- * Spawns a dummy interval to capture the maximum active browser loop identifier, 
- * then forcefully clears every active window interval registered up to that point.
- * @returns {void}
+ * Clears all intervals.
  */
 function resetAllIntervals() {
     let goThroughAllIntervalIDs = setInterval(() => {}, 1000);
@@ -262,9 +286,7 @@ function resetAllIntervals() {
 }
 
 /**
- * Pauses all ongoing, loopable character audio playback variables 
- * handled by the global AudioManager instance.
- * @returns {void}
+ * Pauses specific character sounds.
  */
 function pauseCharacterSounds() {
     if (typeof AudioManager === 'undefined') return;
@@ -274,10 +296,7 @@ function pauseCharacterSounds() {
 }
 
 /**
- * Toggles the fullscreen status of a specified HTML target element based on 
- * whether a fullscreen element currently exists within the document space.
- * @param {HTMLElement|null} element - The target HTML element wrapper to toggle.
- * @returns {void}
+ * Fullscreen toggle helper.
  */
 function toggleFullscreen(element) {
     if (!element) return;
@@ -289,10 +308,7 @@ function toggleFullscreen(element) {
 }
 
 /**
- * Requests the browser to transition a specific HTML element into native fullscreen view, 
- * evaluating cross-browser vendors (WebKit, MS) fallback functions.
- * @param {HTMLElement|null} element - The HTML container requesting full layout focus.
- * @returns {void}
+ * Enter Fullscreen.
  */
 function enterFullscreen(element) {
     if (!element) return;
@@ -306,9 +322,7 @@ function enterFullscreen(element) {
 }
 
 /**
- * Command the active document to exit its fullscreen display state, utilizing standard 
- * and vendor-prefixed webkit alternatives.
- * @returns {void}
+ * Exit Fullscreen.
  */
 function exitFullscreen() {
     if (document.exitFullscreen) {
@@ -319,39 +333,27 @@ function exitFullscreen() {
 }
 
 /**
- * Evaluates the current state of the global global AudioManager asset system and updates 
- * the DOM source image path reflecting either muted or active audio states.
- * @returns {void}
+ * Update Mute Icon.
  */
 function updateMuteButtonIcon() {
     let icon = document.getElementById('mute_icon');
     if (!icon || typeof AudioManager === 'undefined') return;
-    if (AudioManager.isMuted) {
-        icon.src = 'img/sound-off.png'; 
-    } else {
-        icon.src = 'img/volume-up.png';
-    }
+    icon.src = AudioManager.isMuted ? 'img/sound-off.png' : 'img/volume-up.png';
 }
 
 /**
- * Invokes the audio mute toggling procedure inside the AudioManager instance, triggers 
- * interface visual element updates, and un-focuses the target button.
- * @returns {void}
+ * Toggle Mute state.
  */
 function toggleMuteBtn() {
     if (typeof AudioManager !== 'undefined') {
         AudioManager.toggleMute();
         updateMuteButtonIcon(); 
     }
-    if (muteBtnRef) {
-        muteBtnRef.blur(); 
-    }
+    if (muteBtnRef) muteBtnRef.blur(); 
 }
 
 /**
- * Sets a brief timeout delay to allow the application context to generate, 
- * map virtual keyboard property actions, and hook onto mobile application buttons.
- * @returns {void}
+ * Binds mobile touch controls.
  */
 function bindTouchEvents() {
     setTimeout(() => {
@@ -365,12 +367,7 @@ function bindTouchEvents() {
 }
 
 /**
- * Binds specific `touchstart` and `touchend` event handlers to a DOM element, 
- * translating touch input parameters into updates for the simulated game keyboard state.
- * @param {Object} btn - Mapping details structure container.
- * @param {string} btn.id - The unique HTML string ID parameter identifier of the target button element.
- * @param {string} btn.key - The mapped internal state key string representation inside the keyboard system object.
- * @returns {void}
+ * Touch listeners helper.
  */
 function attachTouchListeners(btn) {
     const element = document.getElementById(btn.id);
