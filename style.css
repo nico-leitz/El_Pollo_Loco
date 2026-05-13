@@ -467,6 +467,12 @@ kbd {
     background: linear-gradient(135deg, #ffaa00 0%, #d45d00 100%);
 }
 
+#salsa_bottle {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+}
+
 @media (max-width: 480px) {
     .game_footer {
         font-size: 11px;

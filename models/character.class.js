@@ -63,13 +63,7 @@ class Character extends MoveableObject {
         super();
         this.loadImage("img/2_character_pepe/2_walk/W-21.png");
         this.speed = 3.2; 
-        this.loadImages(this.IMAGES_WALKING);
-        this.loadImages(this.IMAGES_JUMPING);
-        this.loadImages(this.IMAGES_DEAD);
-        this.loadImages(this.IMAGES_HURT);
-        this.loadImages(this.IMAGES_IDLE);
-        this.loadImages(this.IMAGES_LONG_IDLE);
-        
+        this.loadCharacterAnimations();
         this.energy = 100;
         this.lastAction = new Date().getTime();
         this.applyGravity();
@@ -78,37 +72,58 @@ class Character extends MoveableObject {
         this.checkGameOver();
     }
 
+    loadCharacterAnimations() {
+        this.loadImages(this.IMAGES_WALKING);
+        this.loadImages(this.IMAGES_JUMPING);
+        this.loadImages(this.IMAGES_DEAD);
+        this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_IDLE);
+        this.loadImages(this.IMAGES_LONG_IDLE);
+    }
+
     animate() {
         setInterval(() => {
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
-            } 
-            else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-                AudioManager.play(AudioManager.CHARACTER_DAMAGE, 0.02);
-            } 
-            else if (this.isAboveGround()) {
+            } else if (this.isHurt()) {
+                this.handleHurtAnimation();
+            } else if (this.isAboveGround()) {
                 this.playJumpAnimation();  
-            } 
-            else {
-                this.currentJumpImage = 0;
-                this.jumpTick = 0;
-
-                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                    this.playAnimation(this.IMAGES_WALKING);
-                    this.lastAction = new Date().getTime();
-                    if(AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
-                } 
-                else if (this.isLongIdle()) {
-                    this.playAnimation(this.IMAGES_LONG_IDLE);
-                    AudioManager.play(AudioManager.CHARACTER_SNORING, 0.02);
-                } 
-                else {
-                    this.playAnimation(this.IMAGES_IDLE);
-                    if(AudioManager.CHARACTER_SNORING) AudioManager.CHARACTER_SNORING.pause();
-                }
+            } else {
+                this.handleGroundAnimation();
             }
         }, 100);
+    }
+
+    handleHurtAnimation() {
+        this.playAnimation(this.IMAGES_HURT);
+        AudioManager.play(AudioManager.CHARACTER_DAMAGE, 0.02);
+    }
+
+    handleGroundAnimation() {
+        this.currentJumpImage = 0;
+        this.jumpTick = 0;
+        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.handleWalkingAnimation();
+        } else if (this.isLongIdle()) {
+            this.playAnimation(this.IMAGES_LONG_IDLE);
+            AudioManager.play(AudioManager.CHARACTER_SNORING, 0.02);
+        } else {
+            this.playAnimation(this.IMAGES_IDLE);
+            this.stopSnoring();
+        }
+    }
+
+    handleWalkingAnimation() {
+        this.playAnimation(this.IMAGES_WALKING);
+        this.lastAction = new Date().getTime();
+        this.stopSnoring();
+    }
+
+    stopSnoring() {
+        if (AudioManager.CHARACTER_SNORING) {
+            AudioManager.CHARACTER_SNORING.pause();
+        }
     }
 
     playJumpAnimation() {
@@ -117,7 +132,6 @@ class Character extends MoveableObject {
             this.img = this.imgCache[lastPath];
             return;
         }
-
         if (this.jumpTick % 2 === 0) {
             let path = this.IMAGES_JUMPING[this.currentJumpImage];
             this.img = this.imgCache[path];
@@ -131,32 +145,42 @@ class Character extends MoveableObject {
             if (AudioManager.CHARACTER_WALKING) {
                 AudioManager.CHARACTER_WALKING.pause(); 
             }
-
-            if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
-                this.moveRight(); 
-                if (!this.isAboveGround()) {
-                    AudioManager.play(AudioManager.CHARACTER_WALKING, 0.02);
-                }
-            }
-
-            if (this.world.keyboard.LEFT && this.positionX > 0) {
-                this.moveLeft();
-                if (!this.isAboveGround()) {
-                    AudioManager.play(AudioManager.CHARACTER_WALKING, 0.02);
-                }
-            } 
-
-            if(this.world.keyboard.SPACE && !this.isAboveGround()) {
-                this.jump();
-                AudioManager.play(AudioManager.CHARACTER_JUMP, 0.02);
-            }
-                
-            let cameraPosition = -this.positionX + 100;
-            if (cameraPosition > 0) {
-                cameraPosition = 0;
-            }
-            this.world.camera_x = cameraPosition; 
+            this.handleHorizontalMovement();
+            this.handleJumpInput();
+            this.updateCamera();
         }, 1000 / 60);
+    }
+
+    handleHorizontalMovement() {
+        if (this.world.keyboard.RIGHT && this.positionX < this.world.level.level_end_x) {
+            this.moveRight(); 
+            this.playWalkSound();
+        }
+        if (this.world.keyboard.LEFT && this.positionX > 0) {
+            this.moveLeft();
+            this.playWalkSound();
+        } 
+    }
+
+    playWalkSound() {
+        if (!this.isAboveGround()) {
+            AudioManager.play(AudioManager.CHARACTER_WALKING, 0.02);
+        }
+    }
+
+    handleJumpInput() {
+        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jump();
+            AudioManager.play(AudioManager.CHARACTER_JUMP, 0.02);
+        }
+    }
+
+    updateCamera() {
+        let cameraPosition = -this.positionX + 100;
+        if (cameraPosition > 0) {
+            cameraPosition = 0;
+        }
+        this.world.camera_x = cameraPosition; 
     }
 
     moveRight() {
@@ -173,7 +197,6 @@ class Character extends MoveableObject {
         this.speedY = 15;
         this.currentJumpImage = 0;
         this.jumpTick = 0;
-        
         let path = this.IMAGES_JUMPING[0];
         this.img = this.imgCache[path];
     }

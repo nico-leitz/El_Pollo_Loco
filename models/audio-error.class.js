@@ -1,6 +1,4 @@
 class AudioError {
-    
-
 
     static playSafe(sound, volume = 0.05) {
         let checkReady = setInterval(() => {

@@ -20,21 +20,17 @@ class Endboss extends MoveableObject {
     };
 
     IMAGES_WALKING = [
-        'img/4_enemie_boss_chicken/1_walk/G1.png',
-        'img/4_enemie_boss_chicken/1_walk/G2.png',
-        'img/4_enemie_boss_chicken/1_walk/G3.png',
-        'img/4_enemie_boss_chicken/1_walk/G4.png',
+        'img/4_enemie_boss_chicken/1_walk/G1.png', 'img/4_enemie_boss_chicken/1_walk/G2.png',
+        'img/4_enemie_boss_chicken/1_walk/G3.png', 'img/4_enemie_boss_chicken/1_walk/G4.png',
     ];
 
     IMAGES_HURT = [
-        'img/4_enemie_boss_chicken/4_hurt/G21.png',
-        'img/4_enemie_boss_chicken/4_hurt/G22.png',
+        'img/4_enemie_boss_chicken/4_hurt/G22.png', 'img/4_enemie_boss_chicken/4_hurt/G21.png',
         'img/4_enemie_boss_chicken/4_hurt/G23.png'
     ];
 
     IMAGES_DEAD = [
-        'img/4_enemie_boss_chicken/5_dead/G24.png',
-        'img/4_enemie_boss_chicken/5_dead/G25.png',
+        'img/4_enemie_boss_chicken/5_dead/G24.png', 'img/4_enemie_boss_chicken/5_dead/G25.png',
         'img/4_enemie_boss_chicken/5_dead/G26.png'
     ];
 
@@ -44,7 +40,6 @@ class Endboss extends MoveableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
-
         this.positionX = 3500; 
         this.applyGravity();
         this.animate();
@@ -52,9 +47,7 @@ class Endboss extends MoveableObject {
 
     animate() {
         setInterval(() => {
-            if (this.energy > 0) {
-                this.moveEndboss();
-            }
+            if (this.energy > 0) this.moveEndboss();
         }, 1000 / 60);
 
         setInterval(() => {
@@ -71,38 +64,38 @@ class Endboss extends MoveableObject {
     moveEndboss() {
         if (this.world && this.world.character) {
             let characterX = this.world.character.positionX;
-            let distanceToCharacter = Math.abs(this.positionX - characterX);
-            let maxLeftRange = this.startX - 700;
-
-            if (this.counterAttackActive) {
-                if (distanceToCharacter < 80) {
-                    this.counterAttackActive = false; 
-                } else {
-                    this.attackCharacter(characterX);
-                    return;
-                }
-            }
-
-            if (distanceToCharacter < 800 && characterX >= maxLeftRange) {
-                this.hadFirstContact = true;
-            }
-
-            if (this.hadFirstContact) {
-                if (characterX < maxLeftRange) {
-                    this.hadFirstContact = false; 
-                } else {
-                    this.attackCharacter(characterX);
-                    return; 
-                }
+            let hasTarget = this.checkTargetTracking(characterX);
+            if (hasTarget) {
+                this.attackCharacter(characterX);
+                return;
             }
         }
+        this.executePatrol();
+    }
 
+    checkTargetTracking(characterX) {
+        let distance = Math.abs(this.positionX - characterX);
+        let maxLeftRange = this.startX - 700;
+        if (this.counterAttackActive) {
+            if (distance < 80) this.counterAttackActive = false;
+            else return true;
+        }
+        if (distance < 800 && characterX >= maxLeftRange) {
+            this.hadFirstContact = true;
+        }
+        if (this.hadFirstContact) {
+            if (characterX < maxLeftRange) this.hadFirstContact = false;
+            else return true;
+        }
+        return false;
+    }
+
+    executePatrol() {
         if (this.otherDirection) {
             this.positionX += this.speed;
         } else {
             this.positionX -= this.speed;
         }
-
         if (this.positionX > this.startX + 300) {
             this.otherDirection = false;
         } else if (this.positionX < this.startX - 300) {
@@ -114,8 +107,7 @@ class Endboss extends MoveableObject {
         if (this.positionX > characterX) {
             this.positionX -= this.attackSpeed;
             this.otherDirection = false;
-        } 
-        else if (this.positionX < characterX) {
+        } else if (this.positionX < characterX) {
             this.positionX += this.attackSpeed;
             this.otherDirection = true;
         }
@@ -127,22 +119,23 @@ class Endboss extends MoveableObject {
             this.isInDeadAnimation = true;
             this.speedY = 12;
         }
+        this.playDeathFrame();
+        this.positionY -= this.speedY; 
+        this.speedY -= 5; 
+    }
 
+    playDeathFrame() {
         if (this.currentImage < this.IMAGES_DEAD.length) {
             this.playAnimation(this.IMAGES_DEAD);
         } else {
             let lastImagePath = this.getLastImage(this.IMAGES_DEAD);
             this.img = this.imgCache[lastImagePath];
         }
-
-        this.positionY -= this.speedY; 
-        this.speedY -= 5; 
     }
 
     hit(damage) {
         this.energy -= damage;
         this.counterAttackActive = true;
-        
         if (this.energy < 0) {
             this.energy = 0;
         } else {
