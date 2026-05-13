@@ -6,23 +6,31 @@
 class World {
     /** @type {Character} The main playable character instance. */
     character = new Character();
+
     /** @type {Level} The current level container holding all enemies and objects. */
     level = level1;
+
     /** @type {HTMLCanvasElement} The HTML canvas element used for rendering. */
     canvas;
+
     /** @type {CanvasRenderingContext2D} The 2D rendering context of the canvas. */
     ctx;
+
     /** @type {Keyboard} The input listener tracking active key states. */
     keyboard;
+
     /** @type {number} The horizontal camera offset used for scrolling. */
     camera_x = 0;
 
     /** @type {HealthBar} Visual UI bar representing character health. */
     healthBar;
+
     /** @type {CoinBar} Visual UI bar representing collected coins. */
     coinBar;
+
     /** @type {BottleBar} Visual UI bar representing available salsa bottles. */
     bottleBar;
+    
     /** @type {EndbossHealthBar} Visual UI bar representing the boss's health. */
     endbossHealthBar;
     
