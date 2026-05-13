@@ -46,13 +46,28 @@ function createLevelCoins() {
 
 /**
  * Populates the level with a predefined set of collectible salsa bottle entities.
+ * Includes random spawns for the early game and fixed positions for a boss-area supply.
  * @returns {BottleObjects[]} An array of instantiated bottle items.
  */
 function createLevelBottles() {
     return [
+
         new BottleObjects(), new BottleObjects(), new BottleObjects(), 
         new BottleObjects(), new BottleObjects(), new BottleObjects(), 
-        new BottleObjects()
+        new BottleObjects(), new BottleObjects(), new BottleObjects(),
+        new BottleObjects(),
+
+        new BottleObjects(2800),
+        new BottleObjects(2800),
+        new BottleObjects(2800),
+        new BottleObjects(2800),
+        new BottleObjects(2800),
+        new BottleObjects(2800),
+        new BottleObjects(2800),
+        new BottleObjects(2800),
+        new BottleObjects(2800),
+        new BottleObjects(2800),
+        new BottleObjects(2800)
     ];
 }
 

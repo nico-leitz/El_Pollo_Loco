@@ -33,15 +33,22 @@ class BottleObjects extends CollectableObjects {
     };
 
     /**
-     * Initializes the bottle, pre-loads its visual textures, calculates a random 
-     * horizontal spawn placement within the standard level bounds, and sets its 
-     * vertical position to align with the ground.
+     * Initializes the bottle and pre-loads its textures.
+     * Sets the position based on the provided parameter or a random value.
+     * @param {number} [x] - The optional fixed horizontal spawn coordinate. 
+     * If not provided, a random position between 500 and 2500 is generated.
      */
-    constructor() {
+    constructor(x) {
         super();
         this.loadImage(this.IMAGES[0]); 
         this.loadImages(this.IMAGES); 
-        this.positionX = 500 + Math.random() * 2000;
+        
+        if (x !== undefined) {
+            this.positionX = x;
+        } else {
+            this.positionX = 500 + Math.random() * 2000;
+        }
+
         this.positionY = 340;
     }
 
