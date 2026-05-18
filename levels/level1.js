@@ -53,7 +53,7 @@ function createLevelBottles() {
     return [
 
         new BottleObjects(), new BottleObjects(), new BottleObjects(), 
-        new BottleObjects(), new BottleObjects(), new BottleObjects(), 
+        new BottleObjects(), new BottleObjects(), new  BottleObjects(), 
 
         new BottleObjects(3200),
         new BottleObjects(3250),

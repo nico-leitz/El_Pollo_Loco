@@ -14,10 +14,12 @@ class Character extends MoveableObject {
     width = 140;
     /** @type {boolean} Flag indicating if the character has triggered a game-over state. */
     isGameOver = false;
-    /** @type {number} Tracks the current frame index during the jump animation sequence. */
-    currentJumpImage = 0;
-    /** @type {number} Frame counter used to control the speed of the jump animation. */
-    jumpTick = 0;
+    
+    /** @type {number} The downward pull of gravity applied each physics tick. */
+    acceleration;
+    
+    /** @type {number} Timestamp of the last user interaction, used to trigger sleep mode. */
+    lastAction;
 
     /**
      * Collision bounding box adjustments to fine-tune physical hit detection.
@@ -91,7 +93,8 @@ class Character extends MoveableObject {
     constructor() {
         super();
         this.loadImage("img/2_character_pepe/2_walk/W-21.png");
-        this.speed = 3.2; 
+        this.speed = 3.4;
+        this.acceleration = 2;
         this.loadCharacterAnimations();
         this.energy = 100;
         this.lastAction = new Date().getTime();
@@ -148,8 +151,6 @@ class Character extends MoveableObject {
      * @returns {void}
      */
     handleGroundAnimation() {
-        this.currentJumpImage = 0;
-        this.jumpTick = 0;
         if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
             this.handleWalkingAnimation();
         } else if (this.isLongIdle()) {
@@ -183,22 +184,26 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Steps through the jump sprite sequence manually based on a tick counter.
-     * Freezes on the final jump frame to prevent mid-air animation resets.
+     * Dynamically maps the jump sprite frame directly to the current vertical velocity (speedY).
+     * This guarantees perfect synchronization between physics and visual appearance.
      * @returns {void}
      */
     playJumpAnimation() {
-        if (this.currentJumpImage >= this.IMAGES_JUMPING.length) {
-            let lastPath = this.IMAGES_JUMPING[this.IMAGES_JUMPING.length - 1];
-            this.img = this.imgCache[lastPath];
-            return;
-        }
-        if (this.jumpTick % 2 === 0) {
-            let path = this.IMAGES_JUMPING[this.currentJumpImage];
-            this.img = this.imgCache[path];
-            this.currentJumpImage++;
-        }
-        this.jumpTick++;
+        let index;
+        if (this.speedY > 14) index = 0;
+        else if (this.speedY > 10) index = 1;
+        else if (this.speedY > 6) index = 2;
+        else if (this.speedY > 2) index = 3;
+        else if (this.speedY > -2) index = 4;
+        else if (this.speedY > -6) index = 5;
+        else if (this.speedY > -10) index = 6;
+        else if (this.speedY > -14) index = 7;
+        else index = 8;
+
+        index = Math.max(0, Math.min(index, this.IMAGES_JUMPING.length - 1));
+
+        let path = this.IMAGES_JUMPING[index];
+        this.img = this.imgCache[path];
     }
 
     /**
@@ -251,6 +256,9 @@ class Character extends MoveableObject {
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
             this.jump();
             AudioManager.play(AudioManager.CHARACTER_JUMP, 0.02);
+            
+            this.lastAction = new Date().getTime();
+            this.stopSnoring();
         }
     }
 
@@ -286,16 +294,11 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Initiates a jump by applying an upward burst of vertical velocity 
-     * and resetting the jump animation tracking indexes.
+     * Initiates a jump by applying an upward burst of vertical velocity.
      * @returns {void}
      */
     jump() {
-        this.speedY = 15;
-        this.currentJumpImage = 0;
-        this.jumpTick = 0;
-        let path = this.IMAGES_JUMPING[0];
-        this.img = this.imgCache[path];
+        this.speedY = 18;
     }
 
     /**
@@ -308,7 +311,6 @@ class Character extends MoveableObject {
             if (this.isDead() && !this.isGameOver) {
                 this.isGameOver = true;
                 AudioManager.play(AudioManager.CHARACTER_DEAD, 0.05);
-                console.log("Pepe is dead");
                 showGameOverScreen();
             }
         }, 100);

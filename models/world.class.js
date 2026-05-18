@@ -487,7 +487,6 @@ class World {
             this.endbossHealthBar.setPercentage(boss.energy);
             this.addToMap(this.endbossHealthBar);
         } else {
-            // Reset the flag when the boss leaves the screen
             this.bossBarVisible = false;
         }
     }
