@@ -6,32 +6,48 @@
 class World {
     /** @type {Character} The main playable character instance. */
     character = new Character();
+
     /** @type {Level} The current level container holding all enemies and objects. */
     level = level1;
+
     /** @type {HTMLCanvasElement} The HTML canvas element used for rendering. */
     canvas;
+
     /** @type {CanvasRenderingContext2D} The 2D rendering context of the canvas. */
     ctx;
+
     /** @type {Keyboard} The input listener tracking active key states. */
     keyboard;
+
     /** @type {number} The horizontal camera offset used for scrolling. */
     camera_x = 0;
+
     /** @type {HealthBar} Visual UI bar representing character health. */
     healthBar;
+
     /** @type {CoinBar} Visual UI bar representing collected coins. */
     coinBar;
+
     /** @type {BottleBar} Visual UI bar representing available salsa bottles. */
     bottleBar;
+
     /** @type {EndbossHealthBar} Visual UI bar representing the boss's health. */
     endbossHealthBar;
+
     /** @type {ThrowableObject[]} List of active flying projectile objects. */
     throwableObjects = [];
+
     /** @type {boolean} Flag to ensure the hint is only triggered once. */
     hintShown = false;
+
     /** @type {boolean} Controls the visibility of the speech bubble. */
     showHint = false;
+
     /** @type {boolean} State variable to ensure the boss approach audio is only triggered once. */
     bossBarVisible = false;
+
+    /** @type {number} Timestamp to prevent rapid firing of bottles (cooldown). */
+    lastThrowTime = 0;
 
     /**
      * Initializes the game world, sets up the drawing context, UI bars, 
@@ -184,23 +200,6 @@ class World {
     }
 
     /**
-     * Monitors keyboard input for the 'D' key to instantiate and throw a salsa bottle.
-     * @returns {void}
-     */
-    checkThrowObjects() {
-        if (this.keyboard.D && this.bottleBar.amount > 0) {
-            let bottle = new ThrowableObject(
-                this.character.positionX + 100, 
-                this.character.positionY + 100, 
-                this.character.otherDirection
-            );
-            this.throwableObjects.push(bottle);
-            this.bottleBar.amount -= 20;
-            this.bottleBar.setPercentage(this.bottleBar.amount);
-        }
-    }
-
-    /**
      * Checks if flying projectiles collide with any active enemies.
      * @returns {void}
      */
@@ -213,6 +212,46 @@ class World {
                 }
             });
         });
+    }
+
+    /**
+     * Checks if the player input and cooldown allow throwing a bottle.
+     * Works for both desktop keyboard and mobile touch buttons.
+     * @returns {void}
+     */
+    checkThrowObjects() {
+        let timeNow = new Date().getTime();
+        let canThrow = this.keyboard.D && this.bottleBar.amount > 0;
+        let isCooldownOver = (timeNow - this.lastThrowTime > 500);
+
+        if (canThrow && isCooldownOver) {
+            this.executeBottleThrow(timeNow);
+        }
+    }
+
+    /**
+     * Instantiates a new throwable bottle and adds it to the world.
+     * @param {number} timeNow - The current timestamp to reset the cooldown.
+     * @private
+     */
+    executeBottleThrow(timeNow) {
+        this.lastThrowTime = timeNow;
+        let bottle = new ThrowableObject(
+            this.character.positionX + 100, 
+            this.character.positionY + 100, 
+            this.character.otherDirection
+        );
+        this.throwableObjects.push(bottle);
+        this.updateBottleInventory();
+    }
+
+    /**
+     * Deducts ammunition from the bottle bar and updates the UI.
+     * @private
+     */
+    updateBottleInventory() {
+        this.bottleBar.amount -= 20;
+        this.bottleBar.setPercentage(this.bottleBar.amount);
     }
 
     /**

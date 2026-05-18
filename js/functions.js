@@ -373,11 +373,15 @@ function attachTouchListeners(btn) {
     const element = document.getElementById(btn.id);
     if (!element) return;
     element.addEventListener('touchstart', (e) => {
-        e.preventDefault();
+        if(e.cancelable) {
+            e.preventDefault();
+        }
         keyboard[btn.key] = true;
     });
     element.addEventListener('touchend', (e) => {
-        e.preventDefault();
+        if(e.cancelable) {
+            e.preventDefault();
+        }
         keyboard[btn.key] = false;
     });
 }
