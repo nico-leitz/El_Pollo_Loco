@@ -80,7 +80,7 @@ function initEventListeners() {
 function initMenuMusic() {
     const startMusicOnFirstClick = () => {
         if (!isGameplayRunning) {
-            AudioManager.play(AudioManager.MENU_THEME, 0.002, true);
+            AudioManager.play(AudioManager.MENU_THEME, 0.005, true);
         }
         window.removeEventListener('click', startMusicOnFirstClick);
     };
@@ -101,9 +101,9 @@ function setupStartButton() {
         isGameplayRunning = true;
 
         AudioManager.stop(AudioManager.MENU_THEME);
-        AudioManager.play(AudioManager.GAME_START, 0.3, false);
+        AudioManager.play(AudioManager.GAME_START, 0.05, false);
     
-        AudioManager.play(AudioManager.MENU_THEME, 0.002, true); 
+        AudioManager.play(AudioManager.MENU_THEME, 0.005, true); 
 
         hideStartScreens();
         handleMobileStart();
@@ -158,7 +158,7 @@ function setupGameOverButtons() {
         gameOverRestartBtn.addEventListener('click', () => {
             hideGameOverUI();
             resetAllIntervals();
-            AudioManager.play(AudioManager.MENU_THEME, 0.002, true);
+            AudioManager.play(AudioManager.MENU_THEME, 0.005, true);
             if (typeof init === 'function') init(); 
         });
     }
@@ -199,7 +199,7 @@ function setupWinButtons() {
             if (canvasRef) canvasRef.classList.remove('d_none');
             showMobileControlsIfMobile();
             resetAllIntervals();
-            AudioManager.play(AudioManager.MENU_THEME, 0.002, true);
+            AudioManager.play(AudioManager.MENU_THEME, 0.005, true);
             if (typeof init === 'function') init(); 
         });
     }
