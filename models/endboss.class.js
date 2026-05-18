@@ -6,49 +6,33 @@
 class Endboss extends MoveableObject {
     /** @type {number} The vertical rendering coordinate, anchoring the boss to the ground. */
     positionY = 165;
-
     /** @type {number} The visual rendering height of the boss asset. */
     height = 280;
-
     /** @type {number} The visual rendering width of the boss asset. */
     width = 280;
-
     /** @type {number} The current index tracking the active animation frame. */
     currentImage = 0;
-
     /** @type {number} The current health status of the boss (maximum 100). */
     energy = 100;
-
     /** @type {number} The standard horizontal movement speed during the patrol phase. */
     speed = 1.0;
-
     /** @type {number} The accelerated horizontal movement speed when actively tracking the player. */
     attackSpeed = 5.0;
-
     /** @type {number} The initial spawn coordinate, serving as the center of the patrol zone. */
     startX = 3500;
-
     /** @type {boolean} Flag indicating whether the boss has initiated its death sequence. */
     isInDeadAnimation = false;
-
-    /** @type {number} The amount of health deducted from the player upon collision. */
-    damage = 20;
-
     /** @type {boolean} Flag triggered once the player enters the boss's immediate aggro range. */
     hadFirstContact = false;
-    
-    /** @type {boolean} Flag forcing the boss to chase the player immediately after taking damage. */
-    counterAttackActive = false;
+    /** @type {boolean} Flag forcing the boss to chase indefinitely until it damages the player. */
+    isEnraged = false;
 
     /**
      * Collision bounding box adjustments to fine-tune physical hit detection.
      * @type {{top: number, bottom: number, left: number, right: number}}
      */
     offset = {
-        top: 60,
-        bottom: 20,
-        left: 40,
-        right: 40
+        top: 60, bottom: 20, left: 40, right: 40
     };
 
     /** @type {string[]} Array of image paths for the standard walking/patrol animation. */
@@ -70,8 +54,7 @@ class Endboss extends MoveableObject {
     ];
 
     /**
-     * Initializes the Endboss, pre-loads all animation arrays, defines the starting position, 
-     * applies physics, and starts the core behavioral interval loops.
+     * Initializes the Endboss, pre-loads all animation arrays, defines the starting position.
      */
     constructor() {
         super();
@@ -85,8 +68,7 @@ class Endboss extends MoveableObject {
     }
 
     /**
-     * Starts two concurrent loops: one managing positional updates based on logic (~60fps), 
-     * and one cycling through appropriate graphic sprites based on current state (dead, hurt, walking).
+     * Starts logic and animation loops.
      * @returns {void}
      */
     animate() {
@@ -95,66 +77,75 @@ class Endboss extends MoveableObject {
         }, 1000 / 60);
 
         setInterval(() => {
-            if (this.isDead()) {
-                this.handleDeath();
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
+            this.evaluateAnimationState();
         }, 200);
     }
 
     /**
-     * Determines whether the boss should track and attack the player, or fall back 
-     * into a neutral patrol pattern based on distance and combat flags.
+     * Evaluates the current state to play the correct animation frame sequence.
+     * @returns {void}
+     */
+    evaluateAnimationState() {
+        if (this.isDead()) {
+            this.handleDeath();
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+
+    /**
+     * Determines whether the boss should track the player or fall back into patrol.
      * @returns {void}
      */
     moveEndboss() {
-        if (this.world && this.world.character) {
-            let characterX = this.world.character.positionX;
-            let hasTarget = this.checkTargetTracking(characterX);
-            if (hasTarget) {
-                this.attackCharacter(characterX);
-                return;
-            }
+        if (!this.world || !this.world.character) return;
+        
+        let charX = this.world.character.positionX;
+        if (this.checkTargetTracking(charX)) {
+            this.attackCharacter(charX);
+        } else {
+            this.executePatrol();
         }
-        this.executePatrol();
     }
 
     /**
-     * Evaluates spatial distances to trigger or drop the boss's targeting logic.
-     * Factors in initial contact distance, area bounds, and counter-attack priority.
-     * @param {number} characterX - The current horizontal coordinate of the player character.
-     * @returns {boolean} True if the boss should execute an attack move; false otherwise.
+     * Checks if the boss is enraged or if the player is within aggro bounds.
+     * @param {number} charX - The character's X coordinate.
+     * @returns {boolean} True if tracking should occur.
      */
-    checkTargetTracking(characterX) {
-        let distance = Math.abs(this.positionX - characterX);
-        let maxLeftRange = this.startX - 700;
-        if (this.counterAttackActive) {
-            if (distance < 80) this.counterAttackActive = false;
-            else return true;
-        }
-        if (distance < 800 && characterX >= maxLeftRange) {
+    checkTargetTracking(charX) {
+        if (this.isEnraged) return true;
+        
+        if (Math.abs(this.positionX - charX) < 600) {
             this.hadFirstContact = true;
         }
-        if (this.hadFirstContact) {
-            if (characterX < maxLeftRange) this.hadFirstContact = false;
-            else return true;
-        }
-        return false;
+        return this.evaluateArenaBounds(charX);
     }
 
     /**
-     * Executes standard back-and-forth pacing behavior relative to the boss's initial spawn point.
+     * Checks if the player has fled the boss arena area.
+     * @param {number} charX - The character's X coordinate.
+     * @returns {boolean} True if the player is still inside the arena.
+     */
+    evaluateArenaBounds(charX) {
+        if (!this.hadFirstContact) return false;
+        
+        if (charX < this.startX - 700) {
+            this.hadFirstContact = false;
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Executes standard back-and-forth pacing behavior.
      * @returns {void}
      */
     executePatrol() {
-        if (this.otherDirection) {
-            this.positionX += this.speed;
-        } else {
-            this.positionX -= this.speed;
-        }
+        this.positionX += this.otherDirection ? this.speed : -this.speed;
+        
         if (this.positionX > this.startX + 300) {
             this.otherDirection = false;
         } else if (this.positionX < this.startX - 300) {
@@ -163,23 +154,22 @@ class Endboss extends MoveableObject {
     }
 
     /**
-     * Overrides patrol movement to aggressively shift the boss's X position towards the player.
-     * @param {number} characterX - The current horizontal coordinate of the player character.
+     * Overrides patrol movement to aggressively shift towards the player.
+     * @param {number} charX - The character's X coordinate.
      * @returns {void}
      */
-    attackCharacter(characterX) {
-        if (this.positionX > characterX) {
+    attackCharacter(charX) {
+        if (this.positionX > charX) {
             this.positionX -= this.attackSpeed;
             this.otherDirection = false;
-        } else if (this.positionX < characterX) {
+        } else if (this.positionX < charX) {
             this.positionX += this.attackSpeed;
             this.otherDirection = true;
         }
     }
 
     /**
-     * Triggers the physics trajectory (jump and fall) representing the boss's defeat, 
-     * locking the animation into the death sequence.
+     * Triggers the physics trajectory representing the boss's defeat.
      * @returns {void}
      */
     handleDeath() {
@@ -201,33 +191,24 @@ class Endboss extends MoveableObject {
         if (this.currentImage < this.IMAGES_DEAD.length) {
             this.playAnimation(this.IMAGES_DEAD);
         } else {
-            let lastImagePath = this.getLastImage(this.IMAGES_DEAD);
-            this.img = this.imgCache[lastImagePath];
+            let lastPath = this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1];
+            this.img = this.imgCache[lastPath];
         }
     }
 
     /**
-     * Subtracts health, registers the hit timestamp for immunity frames, and 
-     * forces the boss into an aggressive counter-attack phase.
-     * @param {number} damage - The numerical value to subtract from the boss's energy pool.
+     * Subtracts health and forces the boss into an enraged attack phase.
+     * @param {number} damage - Value to subtract.
      * @returns {void}
      */
     hit(damage) {
         this.energy -= damage;
-        this.counterAttackActive = true;
+        this.isEnraged = true;
+        
         if (this.energy < 0) {
             this.energy = 0;
         } else {
             this.lastHit = new Date().getTime();
         }
-    }
-
-    /**
-     * Helper method to extract the terminal string path from a given animation array.
-     * @param {string[]} imagesArray - Target array of image paths.
-     * @returns {string} The final string entry in the array.
-     */
-    getLastImage(imagesArray) {
-        return imagesArray[imagesArray.length - 1];
     }
 }

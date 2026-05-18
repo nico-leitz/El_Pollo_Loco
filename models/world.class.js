@@ -163,6 +163,7 @@ class World {
         this.level.enemies.forEach((enemy) => {
             if (enemy instanceof Endboss && this.character.isColliding(enemy)) {
                 this.damageCharacter(20);
+                enemy.isEnraged = false;
             }
         });
     }
