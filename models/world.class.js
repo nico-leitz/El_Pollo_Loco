@@ -6,49 +6,32 @@
 class World {
     /** @type {Character} The main playable character instance. */
     character = new Character();
-
     /** @type {Level} The current level container holding all enemies and objects. */
     level = level1;
-
     /** @type {HTMLCanvasElement} The HTML canvas element used for rendering. */
     canvas;
-
     /** @type {CanvasRenderingContext2D} The 2D rendering context of the canvas. */
     ctx;
-
     /** @type {Keyboard} The input listener tracking active key states. */
     keyboard;
-
     /** @type {number} The horizontal camera offset used for scrolling. */
     camera_x = 0;
-
     /** @type {HealthBar} Visual UI bar representing character health. */
     healthBar;
-
     /** @type {CoinBar} Visual UI bar representing collected coins. */
     coinBar;
-
     /** @type {BottleBar} Visual UI bar representing available salsa bottles. */
     bottleBar;
-    
     /** @type {EndbossHealthBar} Visual UI bar representing the boss's health. */
     endbossHealthBar;
-    
     /** @type {ThrowableObject[]} List of active flying projectile objects. */
     throwableObjects = [];
-
     /** @type {boolean} Flag to ensure the hint is only triggered once. */
     hintShown = false;
-
     /** @type {boolean} Controls the visibility of the speech bubble. */
     showHint = false;
-
-    /** * @type {boolean} 
-     * State variable to ensure the boss approach audio is only triggered once 
-     * when the health bar first appears.
-     */
-    bossSoundPlayed = false;
-
+    /** @type {boolean} State variable to ensure the boss approach audio is only triggered once. */
+    bossBarVisible = false;
 
     /**
      * Initializes the game world, sets up the drawing context, UI bars, 
@@ -78,8 +61,7 @@ class World {
     }
 
     /**
-     * Establishes a bidirectional link between the world and its main entities 
-     * (Character and Endboss) to allow them to access world-level properties.
+     * Establishes a bidirectional link between the world and its main entities.
      * @returns {void}
      */
     setWorld() {
@@ -91,8 +73,7 @@ class World {
     }
 
     /**
-     * Starts the master logic interval at 100ms, triggering collision checks 
-     * and input-based object spawning.
+     * Starts the master logic interval at 100ms, triggering collision checks.
      * @returns {void}
      */
     run() {
@@ -103,7 +84,7 @@ class World {
             this.checkCollisionsWithCoins();
             this.checkCollisionsWithThrowableBottles();
             this.checkThrowObjects();
-            this.checkBossHintTrigger(); // New logic integrated here
+            this.checkBossHintTrigger();
         }, 100);
     }
 
@@ -121,31 +102,43 @@ class World {
     }
 
     /**
-     * Checks for intersections between the character and standard enemies.
+     * Iterates through enemies to evaluate and resolve chicken collisions.
      * @returns {void}
      */
     checkCollisionsWithChicken() {
+        let collisionData = { enemiesToKill: [], takesDamage: false };
         this.level.enemies.forEach((enemy) => {
             if (!enemy.isDead && this.character.isColliding(enemy)) {
-                this.handleChickenCollisionScenario(enemy);
+                this.evaluateSingleCollision(enemy, collisionData);
             }
         });
+        this.resolveChickenCollisions(collisionData);
     }
 
     /**
-     * Evaluates if a collision with an enemy results in a kill (jumped on) 
-     * or character damage.
-     * @param {MoveableObject} enemy - The enemy involved in the collision.
-     * @returns {void}
+     * Evaluates a single enemy collision to determine if it's a kill or damage.
+     * @param {MoveableObject} enemy 
+     * @param {Object} data 
      */
-    handleChickenCollisionScenario(enemy) {
+    evaluateSingleCollision(enemy, data) {
         let isFalling = this.character.speedY < 0;
         let isAbove = (this.character.positionY + this.character.height) < (enemy.positionY + enemy.height);
-        if (isFalling && isAbove) { 
-            this.killEnemy(enemy);
-            this.character.speedY = 15; 
-            this.resetCharacterJumpAnimation();
+        if (isFalling && isAbove) {
+            data.enemiesToKill.push(enemy);
         } else {
+            data.takesDamage = true;
+        }
+    }
+
+    /**
+     * Executes the resulting actions of all chicken collisions in the current frame.
+     * @param {Object} data 
+     */
+    resolveChickenCollisions(data) {
+        if (data.enemiesToKill.length > 0) {
+            data.enemiesToKill.forEach(enemy => this.killEnemy(enemy));
+            this.character.speedY = 15; 
+        } else if (data.takesDamage) {
             this.damageCharacter(20);
         }
     }
@@ -163,20 +156,6 @@ class World {
     }
 
     /**
-     * Forcefully resets the character's jump animation state, typically after 
-     * successfully jumping on an enemy's head.
-     * @returns {void}
-     */
-    resetCharacterJumpAnimation() {
-        this.character.currentJumpImage = 0;
-        this.character.jumpTick = 0;
-        if (this.character.IMAGES_JUMPING && this.character.IMAGES_JUMPING.length > 0) {
-            let path = this.character.IMAGES_JUMPING[0];
-            this.character.img = this.character.imgCache[path];
-        }
-    }
-
-    /**
      * Specifically handles collision logic between the character and the final boss.
      * @returns {void}
      */
@@ -189,8 +168,7 @@ class World {
     }
 
     /**
-     * Detects if the character collects a salsa bottle, updates the inventory bar,
-     * and removes the item from the map.
+     * Detects if the character collects a salsa bottle, updates the inventory bar.
      * @returns {void}
      */
     checkCollisionsWithBottles() {
@@ -205,8 +183,7 @@ class World {
     }
 
     /**
-     * Monitors keyboard input for the 'D' key to instantiate and throw a 
-     * salsa bottle projectile if inventory allows.
+     * Monitors keyboard input for the 'D' key to instantiate and throw a salsa bottle.
      * @returns {void}
      */
     checkThrowObjects() {
@@ -253,8 +230,7 @@ class World {
     }
 
     /**
-     * Triggers the death sequence for a minion enemy and removes it from 
-     * the level after a brief delay.
+     * Triggers the death sequence for a minion enemy and removes it from the map.
      * @param {MoveableObject} enemy - The target enemy.
      * @returns {void}
      */
@@ -301,8 +277,7 @@ class World {
     }
 
     /**
-     * Directly manipulates the DOM to display victory elements if the 
-     * global utility function is unavailable.
+     * Directly manipulates the DOM to display victory elements as a fallback.
      * @returns {void}
      */
     fallbackWinScreenDisplay() {
@@ -313,8 +288,7 @@ class World {
     }
 
     /**
-     * Main rendering loop using requestAnimationFrame. Clears the canvas and 
-     * redraws all layers, entities, and UI elements.
+     * Main rendering loop using requestAnimationFrame. 
      * @returns {void}
      */
     draw() {
@@ -323,11 +297,7 @@ class World {
         this.drawWorldGameObjects();
         this.ctx.translate(Math.round(-this.camera_x), 0);
         this.drawInterfaceBars();
-
-        if (this.showHint) {
-            this.drawSpeechBubble();
-        }
-
+        if (this.showHint) this.drawSpeechBubble();
         this.ctx.translate(Math.round(this.camera_x), 0);
         this.addToMap(this.character);
         this.ctx.translate(-Math.round(this.camera_x), 0);
@@ -336,73 +306,96 @@ class World {
     }
 
     /**
-     * Renders a dynamic, stylized speech bubble that automatically adjusts its 
-     * width based on the text length.
-     */
-    /**
-     * Renders a compact, semi-transparent speech bubble with a smaller font
-     * and the updated "infinite amount" tactical hint.
+     * Entry point to render the tactical hint speech bubble.
      */
     drawSpeechBubble() {
         const text = "I should use these salsa bottles to defeat the divine chicken!";
-        
         this.ctx.save();
         
-        // --- 1. Smaller Font (16px) ---
-        this.ctx.font = 'bold 16px "Comic Sans MS", "Marker Felt", sans-serif';
+        this.setupBubbleFont();                            
+        let dimensions = this.calculateBubbleDimensions(text); 
+        this.setupBubbleShadow();                         
+        this.buildBubblePath(dimensions);                  
+        this.renderBubbleShape();                          
+        this.renderBubbleText(text, dimensions);           
         
-        // --- 2. Compact Dynamic Dimensions ---
-        const textMetrics = this.ctx.measureText(text);
-        const textWidth = textMetrics.width;
-        
-        const padding = 20; 
-        const width = textWidth + padding;
-        const height = 40;  
-        
-        const x = (this.canvas.width / 2) - (width / 2);
-        const y = 80;       
-        const radius = 12;  
+        this.ctx.restore();
+    }
 
-        // --- 3. Subtle Shadow ---
+    /**
+     * 1. Smaller Font setup.
+     */
+    setupBubbleFont() {
+        this.ctx.font = 'bold 16px "Comic Sans MS", "Marker Felt", sans-serif';
+    }
+
+    /**
+     * 2. Compact Dynamic Dimensions calculation.
+     */
+    calculateBubbleDimensions(text) {
+        const textWidth = this.ctx.measureText(text).width;
+        const width = textWidth + 20;
+        return {
+            x: (this.canvas.width / 2) - (width / 2),
+            y: 80,
+            width: width,
+            height: 40,
+            radius: 12
+        };
+    }
+
+    /**
+     * 3. Subtle Shadow setup.
+     */
+    setupBubbleShadow() {
         this.ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
         this.ctx.shadowBlur = 6;
         this.ctx.shadowOffsetX = 3;
         this.ctx.shadowOffsetY = 3;
+    }
 
-        // --- 4. Semi-Transparent Path (80% Opacity) ---
+    /**
+     * 4. Semi-Transparent Path construction.
+     */
+    buildBubblePath(dim) {
         this.ctx.beginPath();
-        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; 
-        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)'; 
-        this.ctx.lineWidth = 3; 
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        this.ctx.lineWidth = 3;
 
-        this.ctx.moveTo(x + radius, y);
-        this.ctx.lineTo(x + width - radius, y);
-        this.ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-        this.ctx.lineTo(x + width, y + height - radius);
-        this.ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        this.ctx.moveTo(dim.x + dim.radius, dim.y);
+        this.ctx.lineTo(dim.x + dim.width - dim.radius, dim.y);
+        this.ctx.quadraticCurveTo(dim.x + dim.width, dim.y, dim.x + dim.width, dim.y + dim.radius);
+        this.ctx.lineTo(dim.x + dim.width, dim.y + dim.height - dim.radius);
+        this.ctx.quadraticCurveTo(dim.x + dim.width, dim.y + dim.height, dim.x + dim.width - dim.radius, dim.y + dim.height);
         
-        // Compact Tail
-        this.ctx.lineTo(x + (width / 2) + 10, y + height);
-        this.ctx.lineTo(x + (width / 2), y + height + 12);
-        this.ctx.lineTo(x + (width / 2) - 10, y + height);
+        this.ctx.lineTo(dim.x + (dim.width / 2) + 10, dim.y + dim.height);
+        this.ctx.lineTo(dim.x + (dim.width / 2), dim.y + dim.height + 12);
+        this.ctx.lineTo(dim.x + (dim.width / 2) - 10, dim.y + dim.height);
 
-        this.ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-        this.ctx.lineTo(x, y + radius);
-        this.ctx.quadraticCurveTo(x, y, x + radius, y);
+        this.ctx.quadraticCurveTo(dim.x, dim.y + dim.height, dim.x, dim.y + dim.height - dim.radius);
+        this.ctx.lineTo(dim.x, dim.y + dim.radius);
+        this.ctx.quadraticCurveTo(dim.x, dim.y, dim.x + dim.radius, dim.y);
         this.ctx.closePath();
+    }
 
-        // --- 5. Render Bubble ---
+    /**
+     * 5. Render Bubble shape (fill and stroke).
+     */
+    renderBubbleShape() {
         this.ctx.fill();
-        this.ctx.shadowColor = 'transparent'; 
+        this.ctx.shadowColor = 'transparent';
         this.ctx.stroke();
+    }
 
-        // --- 6. Render Text ---
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.9)'; 
+    /**
+     * 6. Render Text aligned within the bubble.
+     */
+    renderBubbleText(text, dim) {
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(text, x + width / 2, y + height / 2);
-
-        this.ctx.restore();
+        this.ctx.fillText(text, dim.x + dim.width / 2, dim.y + dim.height / 2);
     }
 
     /**
@@ -472,16 +465,13 @@ class World {
 
     /**
      * Manages the visibility of the boss health bar and triggers the approach audio.
-     * The sound re-triggers every time the boss re-enters the player's field of view.
      * @returns {void}
      */
     drawEndbossHealthBar() {
         let boss = this.level.enemies.find(e => e instanceof Endboss);
         if (!boss) return;
-
         let edge = -this.camera_x + this.canvas.width;
         let isBossVisible = boss.positionX < edge && boss.energy > 0;
-
         if (isBossVisible && this.endbossHealthBar) {
             this.handleBossEntranceSound();
             this.endbossHealthBar.setPercentage(boss.energy);
